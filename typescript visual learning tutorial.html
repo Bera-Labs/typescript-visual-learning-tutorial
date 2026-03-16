@@ -1,0 +1,2649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TS Concepts — 25 Chapter Interactive Course</title>
+<style>
+:root{
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --mono:'SF Mono','Fira Code','Cascadia Code',monospace;
+  --r-lg:10px;--r-md:7px;
+  --bg:#FAFAF9;--bg2:#F3F2F0;--bg3:#FFFFFF;
+  --bd:#E5E4E1;--bd2:#D0CFC9;
+  --tx:#1A1A18;--tx2:#4A4A46;--tx3:#8A8A84;
+  --purple:#7F77DD;--purple-bg:#EEEDFE;--purple-dk:#3C3489;
+  --green:#1D9E75;--green-bg:#E1F5EE;--green-dk:#085041;
+  --orange:#EF9F27;--orange-bg:#FAEEDA;--orange-dk:#633806;
+  --red:#D85A30;--red-bg:#FAECE7;--red-dk:#712B13;
+  --blue:#2563EB;--blue-bg:#EFF6FF;--blue-bd:#BFDBFE;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1C1C1A;--bg2:#242422;--bg3:#2C2C2A;
+  --bd:#3A3A36;--bd2:#4A4A46;
+  --tx:#E8E8E4;--tx2:#B0B0AA;--tx3:#707068;
+  --purple-bg:#26215C;--purple-dk:#CECBF6;
+  --green-bg:#04342C;--green-dk:#9FE1CB;
+  --orange-bg:#412402;--orange-dk:#FAC775;
+  --red-bg:#4A1B0C;--red-dk:#F5C4B3;
+  --blue:#85C1E9;--blue-bg:#0D2137;--blue-bd:#2E86C1;
+}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);font-size:13px;color:var(--tx);background:var(--bg);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+/* TOP NAV */
+.topnav{display:flex;align-items:center;gap:0;background:var(--bg2);border-bottom:0.5px solid var(--bd);flex-shrink:0;padding:0 16px;height:44px}
+.app-title{font-size:14px;font-weight:600;color:var(--tx);margin-right:16px;white-space:nowrap}
+.ch-tabs{display:flex;gap:2px;overflow-x:auto;flex:1;padding:6px 0;scrollbar-width:none}
+.ch-tabs::-webkit-scrollbar{display:none}
+.ch-tab{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;color:var(--tx3);transition:all .13s;border:0.5px solid transparent;flex-shrink:0}
+.ch-tab:hover{background:var(--bg3);color:var(--tx)}
+.ch-tab.active{background:var(--purple-bg);color:var(--purple-dk);border-color:var(--purple)}
+.ch-tab.done{color:var(--tx2)}
+.progress-pill{font-size:11px;color:var(--tx3);white-space:nowrap;margin-left:8px;flex-shrink:0}
+
+/* MAIN SPLIT */
+.content{display:flex;flex:1;overflow:hidden}
+.sidebar{width:200px;flex-shrink:0;background:var(--bg2);border-right:0.5px solid var(--bd);overflow-y:auto;padding:8px 0}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+.sideitem{display:flex;align-items:center;gap:8px;padding:7px 12px;cursor:pointer;border-left:2px solid transparent;transition:background .12s}
+.sideitem:hover{background:var(--bg3)}
+.sideitem.active{background:var(--bg3);border-left-color:var(--purple)}
+.si-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;flex-shrink:0;background:var(--bd);color:var(--tx2)}
+.sideitem.done .si-num{background:var(--green);color:#fff}
+.sideitem.active .si-num{background:var(--purple);color:#fff}
+.si-info{flex:1;min-width:0}
+.si-title{font-size:11px;font-weight:500;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.si-tag{font-size:9.5px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.main-header{padding:12px 18px;border-bottom:0.5px solid var(--bd);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.ch-badge{padding:2px 9px;border-radius:99px;font-size:11px;font-weight:500;background:var(--purple-bg);color:var(--purple-dk);flex-shrink:0}
+.main-title{font-size:14px;font-weight:500}
+.main-body{flex:1;overflow-y:auto;padding:16px 18px}
+.main-body::-webkit-scrollbar{width:5px}
+.main-body::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
+
+.concept-box{background:var(--bg2);border:0.5px solid var(--bd);border-radius:var(--r-lg);padding:12px 14px;margin-bottom:14px}
+.concept-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);margin-bottom:4px}
+.concept-text{font-size:12.5px;line-height:1.75;color:var(--tx2)}
+.concept-text strong{font-weight:500;color:var(--tx)}
+.concept-text code{font-family:var(--mono);font-size:11px;background:var(--bd);padding:1px 4px;border-radius:3px}
+.concept-text em{font-style:italic}
+
+.callout{border-radius:var(--r-md);padding:9px 12px;margin-bottom:13px;font-size:12px;line-height:1.6}
+.callout-purple{background:var(--purple-bg);color:var(--purple-dk);border:0.5px solid #AFA9EC}
+.callout-green{background:var(--green-bg);color:var(--green-dk);border:0.5px solid #5DCAA5}
+.callout-orange{background:var(--orange-bg);color:var(--orange-dk);border:0.5px solid var(--orange)}
+
+.ref-row{display:flex;gap:7px;margin-bottom:13px;flex-wrap:wrap}
+.ref-card{flex:1;min-width:110px;padding:7px 9px;border-radius:var(--r-md);border:0.5px solid var(--bd);background:var(--bg2)}
+.ref-lbl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.ref-title{font-size:12px;font-weight:500;color:var(--tx)}
+.ref-sub{font-size:10.5px;color:var(--tx3);margin-top:1px;line-height:1.4;font-family:var(--mono)}
+
+.ex-nav{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.ex-arrow{width:24px;height:24px;border-radius:50%;border:0.5px solid var(--bd2);background:transparent;color:var(--tx3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .13s;flex-shrink:0}
+.ex-arrow:hover:not(:disabled){background:var(--bg2);color:var(--tx)}
+.ex-arrow:disabled{opacity:.25;cursor:not-allowed}
+.ex-name{font-size:13px;font-weight:500}
+.ex-counter{font-size:11px;color:var(--tx3);margin-left:5px}
+.ex-desc{font-size:12px;color:var(--tx2);line-height:1.65;margin-bottom:11px}
+.ex-desc code{font-family:var(--mono);font-size:11px;background:var(--bd);padding:1px 4px;border-radius:3px}
+.ex-desc em{font-style:italic}
+
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--tx2)}
+.leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+.step-bar{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg2);border-radius:var(--r-md);border:0.5px solid var(--bd);margin-bottom:7px}
+.sdots{display:flex;gap:4px;flex:1;flex-wrap:wrap}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--bd2);transition:background .2s;flex-shrink:0}
+.sdot.done{background:var(--purple)}.sdot.cur{background:var(--orange)}
+.sctr{font-size:11px;font-weight:500;color:var(--tx3);white-space:nowrap}
+.sdesc{font-size:11px;color:var(--tx2);text-align:right;min-width:100px}
+
+.nav-row{display:flex;gap:6px;align-items:center;margin-bottom:11px}
+.sp{flex:1}
+.btn{padding:6px 14px;border-radius:var(--r-md);border:0.5px solid var(--bd2);background:transparent;color:var(--tx);font-size:12px;cursor:pointer;transition:all .13s;font-family:var(--sans)}
+.btn:hover:not(:disabled){background:var(--bg2)}
+.btn:active:not(:disabled){transform:scale(.98)}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-p{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-bd)}
+.btn-p:hover:not(:disabled){opacity:.85}
+
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:520px){.grid4{grid-template-columns:1fr}}
+.panel{background:var(--bg3);border:0.5px solid var(--bd);border-radius:var(--r-lg);padding:10px 12px;min-height:120px}
+.ptitle{font-size:10px;font-weight:500;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.pdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+.code-block{background:var(--bg2);border:0.5px solid var(--bd);border-radius:var(--r-md);padding:7px 9px;font-family:var(--mono);font-size:10.5px;line-height:1.7;white-space:pre;overflow-x:auto}
+.kw{color:#8B5CF6;font-weight:500}.fn{color:#185FA5}.str{color:#059669}.cm{color:var(--tx3);font-style:italic}
+.hl{background:var(--orange-bg);border-radius:2px;transition:background .2s}
+
+.cstack{display:flex;flex-direction:column-reverse;gap:3px;min-height:80px}
+.frame{padding:4px 8px;border-radius:var(--r-md);font-family:var(--mono);font-size:11px;font-weight:500;border:0.5px solid transparent;transition:all .22s;opacity:0;transform:translateY(4px)}
+.frame.show{opacity:1;transform:translateY(0)}
+.f-global{background:#F1EFE8;color:#444441;border-color:#B4B2A9}
+.f-hof{background:var(--purple-bg);color:var(--purple-dk);border-color:#AFA9EC}
+.f-cb{background:var(--green-bg);color:var(--green-dk);border-color:#5DCAA5}
+.f-active{background:var(--orange-bg);color:var(--orange-dk);border-color:var(--orange)}
+.f-special{background:var(--red-bg);color:var(--red-dk);border-color:#F0997B}
+@media(prefers-color-scheme:dark){.f-global{background:#2C2C2A;color:#D3D1C7;border-color:#5F5E5A}}
+
+.dflow{display:flex;flex-direction:column;gap:3px;min-height:80px;max-height:180px;overflow-y:auto}
+.ditem{display:flex;align-items:flex-start;gap:5px;padding:3px 6px;border-radius:var(--r-md);font-family:var(--mono);font-size:10px;opacity:0;transform:translateX(-4px);transition:all .2s;line-height:1.5}
+.ditem.show{opacity:1;transform:translateX(0)}
+.dicon{flex-shrink:0;width:12px;height:12px;border-radius:2px;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:500}
+.dtxt{flex:1;word-break:break-word}
+.d-input{background:var(--bg2);color:var(--tx)}
+.d-input .dicon{background:var(--bd2);color:var(--tx3)}
+.d-transform{background:var(--green-bg);color:var(--green-dk)}
+.d-transform .dicon{background:#5DCAA5;color:#04342C}
+.d-output{background:var(--purple-bg);color:var(--purple-dk)}
+.d-output .dicon{background:#AFA9EC;color:#26215C}
+.d-special{background:var(--red-bg);color:var(--red-dk)}
+.d-special .dicon{background:var(--red);color:#fff}
+.log-item{background:var(--bg2);color:var(--tx)}
+.log-purple{border-left:2px solid var(--purple)}.log-purple .dicon{background:var(--purple);color:#fff}
+.log-green{border-left:2px solid var(--green)}.log-green .dicon{background:var(--green);color:#fff}
+.log-orange{border-left:2px solid #BA7517}.log-orange .dicon{background:#BA7517;color:#fff}
+.log-red{border-left:2px solid var(--red)}.log-red .dicon{background:var(--red);color:#fff}
+.df-div{height:.5px;background:var(--bd);margin:3px 0}
+.df-lbl{font-size:9px;font-weight:500;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;padding:1px 0 2px}
+
+.memsec{margin-bottom:6px}
+.memtitle{font-size:9px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px;padding:1px 5px;border-radius:3px;display:inline-block}
+.mt-global{background:var(--red-bg);color:var(--red-dk)}
+.mt-local{background:var(--green-bg);color:var(--green-dk)}
+.mt-closure{background:var(--purple-bg);color:var(--purple-dk)}
+@media(prefers-color-scheme:dark){
+  .mt-global{background:#4A1B0C;color:#F5C4B3}
+  .mt-local{background:#04342C;color:#9FE1CB}
+  .mt-closure{background:#26215C;color:#CECBF6}
+}
+.memrows{display:flex;flex-direction:column;gap:2px}
+.memrow{display:flex;align-items:center;font-family:var(--mono);font-size:10px;border-radius:3px;overflow:hidden;opacity:0;transition:all .2s;transform:translateX(-3px)}
+.memrow.show{opacity:1;transform:translateX(0)}
+.memkey{padding:2px 5px;background:var(--bg2);color:var(--tx2);border-right:.5px solid var(--bd);min-width:60px;font-weight:500;flex-shrink:0;font-size:10px}
+.memval{padding:2px 6px;color:var(--tx);background:var(--bg3);flex:1;font-size:10px}
+.mv-new{color:var(--purple-dk);font-weight:500}
+.mv-changed{color:var(--green-dk);font-weight:500}
+.mv-special{color:var(--red-dk);font-weight:500}
+@media(prefers-color-scheme:dark){.mv-new{color:#AFA9EC}.mv-changed{color:#5DCAA5}.mv-special{color:#F5C4B3}}
+.mem-empty{font-size:10px;color:var(--tx3);font-style:italic;padding:2px 0}
+
+/* Mobile sidebar toggle */
+@media(max-width:700px){.sidebar{display:none}.sidebar.open{display:block;position:fixed;left:0;top:44px;bottom:0;z-index:100;box-shadow:2px 0 12px rgba(0,0,0,.15)}}
+.menu-btn{display:none;background:transparent;border:none;cursor:pointer;font-size:18px;color:var(--tx);padding:0 8px}
+@media(max-width:700px){.menu-btn{display:block}}
+</style>
+</head>
+<body>
+<div class="topnav">
+  <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+  <span class="app-title">TS Concepts</span>
+  <div class="ch-tabs" id="ch-tabs"></div>
+  <span class="progress-pill" id="prog-pill">25 chapters</span>
+</div>
+<div class="content">
+  <div class="sidebar" id="sidebar">
+    <div id="side-list"></div>
+  </div>
+  <div class="main">
+    <div class="main-header">
+      <span class="ch-badge" id="hdr-badge">Ch. 1</span>
+      <span class="main-title" id="hdr-title"></span>
+    </div>
+    <div class="main-body" id="main-body">
+      <div class="concept-box"><div class="concept-label">Concept</div><div class="concept-text" id="concept-text"></div></div>
+      <div id="callout-area"></div>
+      <div id="ref-area"></div>
+      <div class="ex-nav">
+        <button class="ex-arrow" id="ex-prev" onclick="switchEx(-1)" disabled>&#8592;</button>
+        <div style="flex:1"><span class="ex-name" id="ex-name"></span><span class="ex-counter" id="ex-ctr"></span></div>
+        <button class="ex-arrow" id="ex-next" onclick="switchEx(1)">&#8594;</button>
+      </div>
+      <div class="ex-desc" id="ex-desc"></div>
+      <div class="legend" id="legend"></div>
+      <div class="step-bar">
+        <div class="sdots" id="sdots"></div>
+        <span class="sctr" id="sctr">0/0</span>
+        <span class="sdesc" id="sdesc">Press Next</span>
+      </div>
+      <div class="nav-row">
+        <button class="btn" id="btn-prev" onclick="nav(-1)" disabled>← Prev</button>
+        <button class="btn btn-p" id="btn-next" onclick="nav(1)">Next →</button>
+        <div class="sp"></div>
+        <button class="btn" id="btn-auto" onclick="autoPlay()">Auto-play</button>
+      </div>
+      <div class="grid4">
+        <div class="panel"><div class="ptitle"><div class="pdot" style="background:var(--purple)"></div>Code</div><div class="code-block" id="card-code" style="min-height:80px"></div></div>
+        <div class="panel"><div class="ptitle"><div class="pdot" style="background:var(--green)"></div>Call stack</div><div class="cstack" id="card-stack"></div></div>
+        <div class="panel"><div class="ptitle"><div class="pdot" style="background:#BA7517"></div>Type checker</div><div class="dflow" id="card-flow"></div></div>
+        <div class="panel"><div class="ptitle"><div class="pdot" style="background:var(--red)"></div><span id="mem-panel-title">Type environment</span></div><div id="card-mem"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const CHAPTERS = [
+{num:1,title:"Type Annotations",tag:"string · number · boolean · void · never · any",
+concept:"TypeScript adds <strong>type annotations</strong> — explicit labels that tell the compiler what kind of value a variable or function holds. Written as a colon after the name: <code>let name: string</code>. The compiler uses these to catch mismatches <em>before</em> your code ever runs. Core primitives: <code>string</code>, <code>number</code>, <code>boolean</code>. Special types: <code>void</code> (returns nothing), <code>never</code> (never returns normally), <code>any</code> (disables type checking — use sparingly).",
+callout:null,
+refs:[
+  {lbl:"string",cls:"",title:"Text values",sub:"'hello', \"world\", `template`"},
+  {lbl:"number",cls:"",title:"All numbers",sub:"int, float, NaN, Infinity"},
+  {lbl:"boolean",cls:"",title:"Logical",sub:"true | false only"},
+  {lbl:"void",cls:"",title:"No return value",sub:"side-effect functions"},
+  {lbl:"never",cls:"",title:"Never completes",sub:"throws or loops forever"},
+],
+memPanelTitle:"Type environment",
+legend:[
+  {color:"var(--purple)",label:"Type declared"},
+  {color:"var(--green)",label:"Type check ✓"},
+  {color:"var(--red)",label:"Type error ✗"},
+  {color:"var(--orange)",label:"Currently checking"},
+],
+examples:[{
+  name:"Primitive type annotations",
+  desc:"Annotate variables with <code>: string</code>, <code>: number</code>, or <code>: boolean</code>. TypeScript checks every assignment against the declared type and flags mismatches at compile time — before the code runs.",
+  code:`<span class="kw">let</span> <span id="gc0">name</span>: <span class="kw">string</span> = <span class="str">"Alice"</span>;
+<span class="kw">let</span> <span id="gc1">age</span>: <span class="kw">number</span> = 30;
+<span class="kw">let</span> <span id="gc2">ok</span>: <span class="kw">boolean</span> = <span class="kw">true</span>;
+<span id="gc3">name</span> = <span class="str">"Bob"</span>;   <span class="cm">// ✓ still string</span>
+<span id="gc4">age</span> = <span class="str">"old"</span>;   <span class="cm">// ✗ string ≠ number</span>
+<span id="gc5">ok</span> = 1;        <span class="cm">// ✗ number ≠ boolean</span>`,
+  steps:[
+    "name: string declared — TS registers this slot as string-only",
+    "age: number declared — registered as number-only",
+    "ok: boolean declared — registered as boolean-only",
+    "name = 'Bob' — string matches :string annotation ✓",
+    "age = 'old' — ERROR: Type 'string' not assignable to 'number' ✗",
+    "ok = 1 — ERROR: Type 'number' not assignable to 'boolean' ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"}],
+    [{l:"module()",t:"f-global"}],
+    [{l:"module()",t:"f-global"}],
+    [{l:"module()",t:"f-global"},{l:"check: name←string",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: age←string",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: ok←number",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"name declared"},{t:"d-transform",i:"⇒",v:"slot type: string"}],
+    [{t:"d-input",i:"→",v:"age declared"},{t:"d-transform",i:"⇒",v:"slot type: number"}],
+    [{t:"d-input",i:"→",v:"ok declared"},{t:"d-transform",i:"⇒",v:"slot type: boolean"}],
+    [{t:"d-transform",i:"⇒",v:"'Bob' is string"},{t:"log-green",i:"✓",v:"string ← string ✓"}],
+    [{t:"d-special",i:"!",v:"'old' is string, slot expects number"},{t:"log-red",i:"✗",v:"Type 'string' not assignable to 'number'"}],
+    [{t:"d-special",i:"!",v:"1 is number, slot expects boolean"},{t:"log-red",i:"✗",v:"Type 'number' not assignable to 'boolean'"}],
+  ],
+  mem:[
+    {g:[{k:"name",v:"string",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"name",v:"string"},{k:"age",v:"number",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"name",v:"string"},{k:"age",v:"number"},{k:"ok",v:"boolean",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"name",v:"string ✓"},{k:"age",v:"number"},{k:"ok",v:"boolean"}],l:[],c:[{k:"check",v:"'Bob': string",s:"mv-changed"}]},
+    {g:[{k:"name",v:"string"},{k:"age",v:"✗ string",s:"mv-special"},{k:"ok",v:"boolean"}],l:[],c:[{k:"error",v:"string ≠ number",s:"mv-special"}]},
+    {g:[{k:"name",v:"string"},{k:"age",v:"number"},{k:"ok",v:"✗ number",s:"mv-special"}],l:[],c:[{k:"error",v:"number ≠ boolean",s:"mv-special"}]},
+  ],
+},{
+  name:"Function parameter & return type annotations",
+  desc:"Annotate function <em>parameters</em> and <em>return types</em>. TypeScript checks both the call site (are arguments the right type?) and the function body (does it return the declared type?).",
+  code:`<span class="kw">function</span> <span id="gc0">add</span>(a: <span class="kw">number</span>, b: <span class="kw">number</span>): <span class="kw">number</span> {
+  <span class="kw">return</span> <span id="gc1">a + b</span>;
+}
+<span class="kw">const</span> <span id="gc2">r1</span> = add(2, 3);
+<span class="kw">const</span> <span id="gc3">r2</span> = add(<span class="str">"x"</span>, 3); <span class="cm">// ✗ wrong arg</span>
+<span class="kw">function</span> <span id="gc4">bad</span>(): <span class="kw">number</span> {
+  <span class="kw">return</span> <span id="gc5"><span class="str">"oops"</span></span>; <span class="cm">// ✗ wrong return</span>
+}`,
+  steps:[
+    "add declared — TS registers signature: (number, number) → number",
+    "return a + b — number+number=number, matches :number annotation ✓",
+    "add(2, 3) — args are number,number → valid call, r1 inferred: number ✓",
+    "add('x', 3) — 'x' is string, arg0 expects number: ERROR ✗",
+    "bad declared — return type annotated as :number",
+    "return 'oops' — 'oops' is string, expected number: ERROR ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"sig: add",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"add() body",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"call: add(2,3)",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: add('x',3)",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"sig: bad",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: bad body",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"add: (number,number)→number"}],
+    [{t:"d-transform",i:"⇒",v:"a+b: number+number"},{t:"log-green",i:"✓",v:"return matches :number ✓"}],
+    [{t:"d-transform",i:"⇒",v:"add(2,3) args match"},{t:"log-green",i:"✓",v:"r1 inferred: number"}],
+    [{t:"d-special",i:"!",v:"arg0: string ≠ number"},{t:"log-red",i:"✗",v:"Argument 'string' not assignable to 'number'"}],
+    [{t:"d-input",i:"→",v:"bad: ()→number"}],
+    [{t:"d-special",i:"!",v:"'oops' is string, return: number"},{t:"log-red",i:"✗",v:"Type 'string' not assignable to 'number'"}],
+  ],
+  mem:[
+    {g:[{k:"add",v:"(n,n)→n",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"add",v:"(n,n)→n"}],l:[{k:"a",v:"number"},{k:"b",v:"number"},{k:"→",v:"number ✓",s:"mv-changed"}],c:[]},
+    {g:[{k:"add",v:"(n,n)→n"},{k:"r1",v:"number ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"add",v:"(n,n)→n"},{k:"r2",v:"ERROR ✗",s:"mv-special"}],l:[],c:[{k:"arg0",v:"string ≠ number",s:"mv-special"}]},
+    {g:[{k:"add",v:"(n,n)→n"},{k:"bad",v:"()→n",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"bad",v:"()→n ✗",s:"mv-special"}],l:[{k:"return",v:"string ≠ number",s:"mv-special"}],c:[]},
+  ],
+},{
+  name:"void, never, and any",
+  desc:"<code>void</code>: function returns nothing (side effects only). <code>never</code>: function never completes normally — it throws or loops forever. <code>any</code>: opts out of type checking entirely. Use <code>any</code> as a last resort.",
+  code:`<span class="kw">function</span> log(msg: <span class="kw">string</span>): <span id="gc0"><span class="kw">void</span></span> {
+  console.log(msg);
+}
+<span class="kw">function</span> fail(e: <span class="kw">string</span>): <span id="gc1"><span class="kw">never</span></span> {
+  <span id="gc2"><span class="kw">throw new</span> Error(e)</span>;
+}
+<span class="kw">let</span> <span id="gc3">x</span>: <span class="kw">any</span> = 42;
+<span id="gc4">x</span> = <span class="str">"hello"</span>; <span class="cm">// any: ok</span>
+<span id="gc5">x</span>.anything(); <span class="cm">// no type error</span>`,
+  steps:[
+    "log: void — returns undefined; TS enforces no meaningful return value",
+    "fail: never — TS marks this as a function that never returns normally",
+    "throw — confirms never: execution stops here, nothing follows ✓",
+    "x: any — type checking disabled; 42 assigned with no constraint",
+    "x = 'hello' — string assigned to any: no error (any accepts everything)",
+    "x.anything() — any allows any property access with no TS error (unsafe!)",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"log: void",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"fail: never",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"throw → never",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"x: any",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"any ← string",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"any.anything()",t:"f-hof"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"log: (): void"},{t:"log-green",i:"✓",v:"no return value expected ✓"}],
+    [{t:"d-special",i:"!",v:"fail: (): never — won't return"},{t:"log-orange",i:"!",v:"unreachable code past this call"}],
+    [{t:"d-special",i:"!",v:"throw — execution terminates"},{t:"log-green",i:"✓",v:"throw confirms never type ✓"}],
+    [{t:"d-input",i:"→",v:"x: any — type checking disabled"},{t:"log-orange",i:"!",v:"any is an escape hatch — avoid in production"}],
+    [{t:"d-transform",i:"⇒",v:"any accepts string: no error"},{t:"log-orange",i:"!",v:"type info is lost"}],
+    [{t:"d-transform",i:"⇒",v:"any.anything() — no check performed"},{t:"log-red",i:"!",v:"danger: runtime error possible"}],
+  ],
+  mem:[
+    {g:[{k:"log",v:"(): void",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"log",v:"(): void"},{k:"fail",v:"(): never",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"fail",v:"(): never"}],l:[{k:"throw",v:"terminates",s:"mv-special"}],c:[]},
+    {g:[{k:"fail",v:"(): never"},{k:"x",v:"any = 42",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"x",v:"any = 'hello'",s:"mv-changed"}],l:[],c:[]},
+    {g:[{k:"x",v:"any — unchecked",s:"mv-special"}],l:[],c:[{k:"risk",v:"no type safety",s:"mv-special"}]},
+  ],
+}]
+},
+{num:2,title:"Type Inference",tag:"infer · widening · literal types · return type",
+concept:"TypeScript can <strong>infer</strong> types automatically from the values you assign — you don't always need to write an annotation. The compiler looks at the right-hand side and deduces the type. <code>let</code> variables get a <em>widened</em> type (e.g. <code>number</code>) because they can be reassigned to any number. <code>const</code> variables get a <em>literal</em> type (e.g. <code>3.14</code>) because they can never change. Inference flows through function bodies and call sites too.",
+callout:null,
+refs:[
+  {lbl:"Widening",cls:"",title:"let x = 3",sub:"inferred: number (can change)"},
+  {lbl:"Literal",cls:"",title:"const x = 3",sub:"inferred: 3 (exact value)"},
+  {lbl:"Best common",cls:"",title:"[1, 'a']",sub:"inferred: (number | string)[]"},
+],
+memPanelTitle:"Type environment",
+legend:[
+  {color:"var(--purple)",label:"Inferred type"},
+  {color:"var(--green)",label:"Inference ✓"},
+  {color:"var(--orange)",label:"Widened type"},
+  {color:"var(--red)",label:"Type mismatch ✗"},
+],
+examples:[{
+  name:"Variable type inference",
+  desc:"TypeScript infers the type of a variable from its initial value. Once inferred, the type is fixed — you cannot assign a value of a different type later.",
+  code:`<span class="kw">let</span> <span id="gc0">msg</span> = <span class="str">"hello"</span>;    <span class="cm">// inferred: string</span>
+<span class="kw">let</span> <span id="gc1">count</span> = 0;       <span class="cm">// inferred: number</span>
+<span class="kw">let</span> <span id="gc2">flag</span> = <span class="kw">true</span>;    <span class="cm">// inferred: boolean</span>
+<span class="kw">const</span> <span id="gc3">arr</span> = [1, 2, 3]; <span class="cm">// inferred: number[]</span>
+<span id="gc4">msg</span> = 42;           <span class="cm">// ✗ number ≠ string</span>
+<span id="gc5">count</span> = msg;        <span class="cm">// ✗ string ≠ number</span>`,
+  steps:[
+    "msg = 'hello' — TS infers type string from the string literal value",
+    "count = 0 — TS infers type number from the numeric value",
+    "flag = true — TS infers type boolean from the boolean literal",
+    "arr = [1,2,3] — TS infers number[] from the array of numbers",
+    "msg = 42 — ERROR: 42 is number, but msg was inferred as string ✗",
+    "count = msg — ERROR: msg is string, but count was inferred as number ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"infer: msg",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"infer: count",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"infer: flag",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"infer: arr",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: msg←number",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: count←string",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"'hello' → string literal"},{t:"d-transform",i:"⇒",v:"msg inferred: string"}],
+    [{t:"d-input",i:"→",v:"0 → numeric literal"},{t:"d-transform",i:"⇒",v:"count inferred: number"}],
+    [{t:"d-input",i:"→",v:"true → boolean literal"},{t:"d-transform",i:"⇒",v:"flag inferred: boolean"}],
+    [{t:"d-input",i:"→",v:"[1,2,3] → number array"},{t:"d-transform",i:"⇒",v:"arr inferred: number[]"}],
+    [{t:"d-special",i:"!",v:"42 is number, msg: string"},{t:"log-red",i:"✗",v:"Type 'number' not assignable to 'string'"}],
+    [{t:"d-special",i:"!",v:"msg is string, count: number"},{t:"log-red",i:"✗",v:"Type 'string' not assignable to 'number'"}],
+  ],
+  mem:[
+    {g:[{k:"msg",v:"string",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"msg",v:"string"},{k:"count",v:"number",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"msg",v:"string"},{k:"count",v:"number"},{k:"flag",v:"boolean",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"msg",v:"string"},{k:"count",v:"number"},{k:"arr",v:"number[]",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"msg",v:"string ✗",s:"mv-special"},{k:"count",v:"number"}],l:[],c:[{k:"error",v:"42 ≠ string",s:"mv-special"}]},
+    {g:[{k:"msg",v:"string"},{k:"count",v:"number ✗",s:"mv-special"}],l:[],c:[{k:"error",v:"msg ≠ number",s:"mv-special"}]},
+  ],
+},{
+  name:"const literal types vs let widening",
+  desc:"<code>const</code> variables get a <em>literal</em> type — the exact value — because they can never be reassigned. <code>let</code> variables get a <em>widened</em> type because they might change later.",
+  code:`<span class="kw">const</span> <span id="gc0">PI</span> = 3.14;     <span class="cm">// type: 3.14</span>
+<span class="kw">let</span>   <span id="gc1">pi</span> = 3.14;     <span class="cm">// type: number</span>
+<span class="kw">const</span> <span id="gc2">dir</span> = <span class="str">"north"</span>; <span class="cm">// type: "north"</span>
+<span class="kw">let</span>   <span id="gc3">dir2</span> = <span class="str">"north"</span>;<span class="cm">// type: string</span>
+<span class="kw">const</span> <span id="gc4">nums</span> = [1, 2];  <span class="cm">// type: number[]</span>
+<span class="kw">let</span>   <span id="gc5">mix</span> = [1, <span class="str">"a"</span>]; <span class="cm">// (string|number)[]</span>`,
+  steps:[
+    "const PI = 3.14 — const never changes, TS infers literal type: 3.14",
+    "let pi = 3.14 — let can change, TS widens to: number",
+    "const dir = 'north' — literal type: 'north' (not just any string)",
+    "let dir2 = 'north' — widened to: string (could be reassigned to any string)",
+    "const nums = [1,2] — inferred: number[] (arrays are always widened)",
+    "let mix = [1,'a'] — mixed array: (string | number)[] best common type",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"const → literal",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"let → widened",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"const → literal",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"let → widened",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"array → widened",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"mixed → union",t:"f-hof"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"3.14 (const)"},{t:"d-output",i:"←",v:"type: 3.14 (literal)"}],
+    [{t:"d-input",i:"→",v:"3.14 (let)"},{t:"d-output",i:"←",v:"type: number (widened)"}],
+    [{t:"d-input",i:"→",v:"'north' (const)"},{t:"d-output",i:"←",v:"type: \"north\" (literal)"}],
+    [{t:"d-input",i:"→",v:"'north' (let)"},{t:"d-output",i:"←",v:"type: string (widened)"}],
+    [{t:"d-input",i:"→",v:"[1,2] all numbers"},{t:"d-output",i:"←",v:"type: number[]"}],
+    [{t:"d-transform",i:"⇒",v:"1 and 'a' → best common type"},{t:"d-output",i:"←",v:"type: (string | number)[]"}],
+  ],
+  mem:[
+    {g:[{k:"PI",v:"3.14 (literal)",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"PI",v:"3.14"},{k:"pi",v:"number (wide)",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"PI",v:"3.14"},{k:"pi",v:"number"},{k:"dir",v:"\"north\"",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"dir",v:"\"north\""},{k:"dir2",v:"string",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"dir2",v:"string"},{k:"nums",v:"number[]",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"nums",v:"number[]"},{k:"mix",v:"(string|number)[]",s:"mv-new"}],l:[],c:[]},
+  ],
+},{
+  name:"Return type inference",
+  desc:"TypeScript infers a function's return type by analysing its body. You don't need to annotate the return type — but doing so is good practice for public APIs as it catches accidental type changes.",
+  code:`<span class="kw">function</span> <span id="gc0">double</span>(x: <span class="kw">number</span>) {
+  <span class="kw">return</span> <span id="gc1">x * 2</span>;
+}
+<span class="kw">function</span> <span id="gc2">greet</span>(name: <span class="kw">string</span>) {
+  <span class="kw">return</span> <span id="gc3"><span class="str">"Hi "</span> + name</span>;
+}
+<span class="kw">const</span> <span id="gc4">n</span> = double(5);
+<span class="kw">const</span> <span id="gc5">s</span> = greet(<span class="str">"Al"</span>);`,
+  steps:[
+    "double declared — no return annotation; TS will infer from the body",
+    "return x * 2 — number * number = number; TS infers return type: number",
+    "greet declared — no return annotation; TS will infer from the body",
+    "return 'Hi ' + name — string + string = string; inferred return: string",
+    "n = double(5) — TS knows double returns number; n inferred: number ✓",
+    "s = greet('Al') — TS knows greet returns string; s inferred: string ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"analyse: double",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"double body",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"analyse: greet",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"greet body",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"call: double(5)",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"call: greet('Al')",t:"f-cb"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"double — no return annotation"}],
+    [{t:"d-transform",i:"⇒",v:"x*2: number*number"},{t:"d-output",i:"←",v:"inferred return: number"}],
+    [{t:"d-input",i:"→",v:"greet — no return annotation"}],
+    [{t:"d-transform",i:"⇒",v:"'Hi '+name: string+string"},{t:"d-output",i:"←",v:"inferred return: string"}],
+    [{t:"d-transform",i:"⇒",v:"double(5)→number"},{t:"log-green",i:"✓",v:"n inferred: number ✓"}],
+    [{t:"d-transform",i:"⇒",v:"greet('Al')→string"},{t:"log-green",i:"✓",v:"s inferred: string ✓"}],
+  ],
+  mem:[
+    {g:[{k:"double",v:"(n)→?",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"double",v:"(n)→number",s:"mv-changed"}],l:[{k:"return",v:"number (inferred)",s:"mv-new"}],c:[]},
+    {g:[{k:"double",v:"(n)→number"},{k:"greet",v:"(s)→?",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"double",v:"(n)→number"},{k:"greet",v:"(s)→string",s:"mv-changed"}],l:[],c:[]},
+    {g:[{k:"double",v:"(n)→number"},{k:"n",v:"number",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"greet",v:"(s)→string"},{k:"s",v:"string",s:"mv-new"}],l:[],c:[]},
+  ],
+}]
+},
+{num:3,title:"Interfaces",tag:"interface · optional · readonly · extends",
+concept:"An <strong>interface</strong> defines the <em>shape</em> of an object — the names and types of its properties. TypeScript uses <strong>structural typing</strong>: if an object has all the required properties with the right types, it satisfies the interface — no explicit <code>implements</code> needed. Mark properties <code>optional</code> with <code>?</code> (they may be absent) or <code>readonly</code> (they cannot be changed after creation). Interfaces can <code>extend</code> other interfaces to compose shapes.",
+callout:null,
+refs:[
+  {lbl:"interface",cls:"",title:"Object shape contract",sub:"name + type per property"},
+  {lbl:"?",cls:"",title:"Optional property",sub:"may be absent from object"},
+  {lbl:"readonly",cls:"",title:"Immutable after init",sub:"cannot be reassigned"},
+  {lbl:"extends",cls:"",title:"Inherit shape",sub:"adds to existing interface"},
+],
+memPanelTitle:"Type environment",
+legend:[
+  {color:"var(--purple)",label:"Shape declared"},
+  {color:"var(--green)",label:"Shape satisfied ✓"},
+  {color:"var(--red)",label:"Shape violated ✗"},
+  {color:"var(--orange)",label:"Currently checking"},
+],
+examples:[{
+  name:"Basic interface definition and use",
+  desc:"Define an object shape with <code>interface</code>. TypeScript checks every object literal assigned to that type. Missing required properties and extra unexpected properties are both errors.",
+  code:`<span class="kw">interface</span> <span id="gc0">User</span> {
+  <span id="gc1">name</span>: <span class="kw">string</span>;
+  <span id="gc2">age</span>: <span class="kw">number</span>;
+}
+<span class="kw">const</span> <span id="gc3">u</span>: User = { name: <span class="str">"Alice"</span>, age: 30 };
+<span class="kw">const</span> <span id="gc4">bad</span>: User = { name: <span class="str">"Bob"</span> }; <span class="cm">// ✗</span>
+<span class="kw">const</span> <span id="gc5">extra</span>: User = { name: <span class="str">"C"</span>, age: 5, role: <span class="str">"x"</span> }; <span class="cm">// ✗</span>`,
+  steps:[
+    "interface User declared — defines required object shape",
+    "name: string — User must have a string property called name",
+    "age: number — User must have a number property called age",
+    "u = {name:'Alice', age:30} — all required properties present ✓",
+    "bad = {name:'Bob'} — age is missing; required property: ERROR ✗",
+    "extra — has extra 'role' property; excess property check: ERROR ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"define: User",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"define: User",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"define: User",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"check: u vs User",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: bad vs User",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: extra vs User",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"User interface registered"}],
+    [{t:"d-input",i:"→",v:"required: name: string"}],
+    [{t:"d-input",i:"→",v:"required: age: number"}],
+    [{t:"d-transform",i:"⇒",v:"name ✓, age ✓"},{t:"log-green",i:"✓",v:"u satisfies User ✓"}],
+    [{t:"d-special",i:"!",v:"age is missing"},{t:"log-red",i:"✗",v:"Property 'age' is missing in type"}],
+    [{t:"d-special",i:"!",v:"'role' not in User shape"},{t:"log-red",i:"✗",v:"Object literal may only specify known properties"}],
+  ],
+  mem:[
+    {g:[{k:"User",v:"interface",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"User",v:"interface"}],l:[{k:"name",v:"string (req)",s:"mv-new"}],c:[]},
+    {g:[{k:"User",v:"interface"}],l:[{k:"name",v:"string"},{k:"age",v:"number (req)",s:"mv-new"}],c:[]},
+    {g:[{k:"User",v:"interface"},{k:"u",v:"User ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"u",v:"User ✓"},{k:"bad",v:"User ✗",s:"mv-special"}],l:[],c:[{k:"missing",v:"age: number",s:"mv-special"}]},
+    {g:[{k:"bad",v:"User ✗"},{k:"extra",v:"User ✗",s:"mv-special"}],l:[],c:[{k:"excess",v:"role not in User",s:"mv-special"}]},
+  ],
+},{
+  name:"Optional ? and readonly properties",
+  desc:"<code>prop?: type</code> makes a property optional — it may be absent. <code>readonly prop: type</code> means the property can be set once (at creation) but never changed afterwards.",
+  code:`<span class="kw">interface</span> <span id="gc0">Config</span> {
+  host: <span class="kw">string</span>;
+  <span id="gc1">port?</span>: <span class="kw">number</span>;
+  <span class="kw">readonly</span> <span id="gc2">id</span>: <span class="kw">string</span>;
+}
+<span class="kw">const</span> <span id="gc3">c</span>: Config = { host: <span class="str">"localhost"</span>, id: <span class="str">"x1"</span> };
+<span id="gc4">c.port</span> = 8080;   <span class="cm">// ✓ optional, writable</span>
+<span id="gc5">c.id</span> = <span class="str">"x2"</span>;     <span class="cm">// ✗ readonly</span>`,
+  steps:[
+    "Config interface — host required, port optional, id readonly",
+    "port?: number — ? means port may be omitted when creating Config",
+    "readonly id: string — id can be set once, never changed after",
+    "c = {host, id} — valid: port omitted (optional ok), id set once ✓",
+    "c.port = 8080 — assigning optional writable property: valid ✓",
+    "c.id = 'x2' — Cannot assign to 'id' because it is a read-only property ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"define: Config",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"optional: port?",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"readonly: id",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"check: c vs Config",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"write: c.port",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: c.id write",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"Config: host, port?, readonly id"}],
+    [{t:"d-transform",i:"⇒",v:"port?: may be undefined"},{t:"log-purple",i:"i",v:"optional props have type: number | undefined"}],
+    [{t:"d-transform",i:"⇒",v:"readonly: compile-time guard"},{t:"log-orange",i:"!",v:"readonly enforced only by TS, not JS runtime"}],
+    [{t:"d-transform",i:"⇒",v:"port omitted (ok), id set"},{t:"log-green",i:"✓",v:"c satisfies Config ✓"}],
+    [{t:"d-transform",i:"⇒",v:"c.port = 8080"},{t:"log-green",i:"✓",v:"optional prop assigned ✓"}],
+    [{t:"d-special",i:"!",v:"c.id is readonly"},{t:"log-red",i:"✗",v:"Cannot assign to read-only property 'id'"}],
+  ],
+  mem:[
+    {g:[{k:"Config",v:"interface",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Config",v:"interface"}],l:[{k:"port?",v:"number|undef",s:"mv-new"}],c:[]},
+    {g:[{k:"Config",v:"interface"}],l:[{k:"port?",v:"number|undef"},{k:"id",v:"readonly str",s:"mv-new"}],c:[]},
+    {g:[{k:"Config",v:"interface"},{k:"c",v:"Config ✓",s:"mv-new"}],l:[],c:[{k:"c.port",v:"undefined"},{k:"c.id",v:"'x1'"}]},
+    {g:[{k:"c",v:"Config ✓"}],l:[],c:[{k:"c.port",v:"8080 ✓",s:"mv-changed"},{k:"c.id",v:"'x1'"}]},
+    {g:[{k:"c",v:"Config ✓"}],l:[],c:[{k:"c.id",v:"read-only ✗",s:"mv-special"}]},
+  ],
+},{
+  name:"Extending interfaces",
+  desc:"Use <code>extends</code> to build a new interface that inherits all properties of another. The extending interface must satisfy the parent shape plus add its own properties.",
+  code:`<span class="kw">interface</span> <span id="gc0">Animal</span> { name: <span class="kw">string</span> }
+<span class="kw">interface</span> <span id="gc1">Dog</span> <span class="kw">extends</span> Animal {
+  <span id="gc2">breed</span>: <span class="kw">string</span>;
+}
+<span class="kw">const</span> <span id="gc3">d</span>: Dog = { name: <span class="str">"Rex"</span>, breed: <span class="str">"Lab"</span> };
+<span class="kw">const</span> <span id="gc4">d2</span>: Dog = { breed: <span class="str">"Poodle"</span> }; <span class="cm">// ✗ name missing</span>
+<span class="kw">const</span> <span id="gc5">a</span>: Animal = d; <span class="cm">// ✓ Dog → Animal ok</span>`,
+  steps:[
+    "Animal interface — base shape: requires name: string",
+    "Dog extends Animal — Dog inherits name, adds its own properties",
+    "breed: string — Dog's own property; Dog now requires: name + breed",
+    "d = {name:'Rex', breed:'Lab'} — all required props present ✓",
+    "d2 = {breed:'Poodle'} — name (inherited from Animal) is missing ✗",
+    "a: Animal = d — Dog satisfies Animal (structural typing) ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"define: Animal",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"define: Dog extends Animal",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"define: Dog.breed",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"check: d vs Dog",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: d2 vs Dog",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"check: d → Animal",t:"f-cb"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"Animal: {name: string}"}],
+    [{t:"d-transform",i:"⇒",v:"Dog inherits: name: string"},{t:"d-input",i:"→",v:"Dog adds own props"}],
+    [{t:"d-transform",i:"⇒",v:"Dog shape: {name, breed}"}],
+    [{t:"d-transform",i:"⇒",v:"name ✓, breed ✓"},{t:"log-green",i:"✓",v:"d satisfies Dog ✓"}],
+    [{t:"d-special",i:"!",v:"name (from Animal) is missing"},{t:"log-red",i:"✗",v:"Property 'name' missing in type"}],
+    [{t:"d-transform",i:"⇒",v:"d has name ✓ → Animal satisfied"},{t:"log-green",i:"✓",v:"structural typing: Dog assignable to Animal ✓"}],
+  ],
+  mem:[
+    {g:[{k:"Animal",v:"{name:str}",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Animal",v:"{name:str}"},{k:"Dog",v:"extends Animal",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Dog",v:"{name,breed}",s:"mv-changed"}],l:[],c:[]},
+    {g:[{k:"Dog",v:"{name,breed}"},{k:"d",v:"Dog ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"d",v:"Dog ✓"},{k:"d2",v:"Dog ✗",s:"mv-special"}],l:[],c:[{k:"missing",v:"name: string",s:"mv-special"}]},
+    {g:[{k:"d",v:"Dog ✓"},{k:"a",v:"Animal ✓",s:"mv-new"}],l:[],c:[{k:"structural",v:"Dog → Animal ok",s:"mv-changed"}]},
+  ],
+}]
+},
+{num:4,title:"Type Aliases",tag:"type · alias · function types · recursive",
+concept:"A <strong>type alias</strong> uses the <code>type</code> keyword to give a name to any type expression — primitives, unions, objects, function signatures, tuples, or even recursive structures. Unlike <code>interface</code>, type aliases can represent any type, not just object shapes. The key practical difference: interfaces support <em>declaration merging</em> (reopening to add properties) while type aliases do not.",
+callout:null,
+refs:[
+  {lbl:"type",cls:"",title:"Name any type",sub:"primitives, unions, fns, objects"},
+  {lbl:"vs interface",cls:"",title:"No merging",sub:"can alias any shape"},
+  {lbl:"recursive",cls:"",title:"Self-referencing",sub:"tree, linked list patterns"},
+],
+memPanelTitle:"Type environment",
+legend:[
+  {color:"var(--purple)",label:"Type alias"},
+  {color:"var(--green)",label:"Check ✓"},
+  {color:"var(--red)",label:"Mismatch ✗"},
+  {color:"var(--orange)",label:"Currently checking"},
+],
+examples:[{
+  name:"Aliasing primitives, objects, and unions",
+  desc:"Use <code>type</code> to create a name for any type expression — including unions of primitives, object shapes, and function signatures.",
+  code:`<span class="kw">type</span> <span id="gc0">ID</span> = <span class="kw">string</span> | <span class="kw">number</span>;
+<span class="kw">type</span> <span id="gc1">Point</span> = { x: <span class="kw">number</span>; y: <span class="kw">number</span> };
+<span class="kw">type</span> <span id="gc2">CB</span> = (err: <span class="kw">string</span> | <span class="kw">null</span>) => <span class="kw">void</span>;
+<span class="kw">const</span> <span id="gc3">id</span>: ID = 42;
+<span class="kw">const</span> <span id="gc4">p</span>: Point = { x: 1, y: 2 };
+<span class="kw">const</span> <span id="gc5">id2</span>: ID = <span class="kw">true</span>; <span class="cm">// ✗ boolean not in ID</span>`,
+  steps:[
+    "type ID = string | number — alias for a union; ID can be either type",
+    "type Point = {x,y} — alias for an object shape",
+    "type CB = (err) => void — alias for a function signature",
+    "id = 42 — 42 is number, number is in string|number: valid ✓",
+    "p = {x:1,y:2} — matches Point shape: valid ✓",
+    "id2 = true — boolean is not in string|number: ERROR ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"alias: ID",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"alias: Point",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"alias: CB",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"check: id as ID",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"check: p as Point",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: id2 as ID",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"ID = string | number"},{t:"d-transform",i:"⇒",v:"alias registered"}],
+    [{t:"d-input",i:"→",v:"Point = {x:number, y:number}"}],
+    [{t:"d-input",i:"→",v:"CB = (string|null) => void"}],
+    [{t:"d-transform",i:"⇒",v:"42: number ∈ string|number"},{t:"log-green",i:"✓",v:"id: ID ✓"}],
+    [{t:"d-transform",i:"⇒",v:"{x:1,y:2} matches Point"},{t:"log-green",i:"✓",v:"p: Point ✓"}],
+    [{t:"d-special",i:"!",v:"true: boolean ∉ string|number"},{t:"log-red",i:"✗",v:"Type 'boolean' not assignable to 'ID'"}],
+  ],
+  mem:[
+    {g:[{k:"ID",v:"string|number",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"ID",v:"string|number"},{k:"Point",v:"{x,y}",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"ID",v:"string|number"},{k:"Point",v:"{x,y}"},{k:"CB",v:"fn→void",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"ID",v:"string|number"},{k:"id",v:"42 (number) ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"id",v:"42 ✓"},{k:"p",v:"Point ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"p",v:"Point ✓"},{k:"id2",v:"boolean ✗",s:"mv-special"}],l:[],c:[{k:"error",v:"bool ∉ string|num",s:"mv-special"}]},
+  ],
+},{
+  name:"Function type aliases",
+  desc:"Type aliases can name function signatures. Assign any arrow function or function expression that matches the signature — TS will check parameter types and return type.",
+  code:`<span class="kw">type</span> <span id="gc0">Greet</span> = (name: <span class="kw">string</span>) => <span class="kw">string</span>;
+<span class="kw">type</span> <span id="gc1">IsPos</span> = (n: <span class="kw">number</span>) => <span class="kw">boolean</span>;
+<span class="kw">const</span> <span id="gc2">hi</span>: Greet = name => <span class="str">"Hi "</span> + name;
+<span class="kw">const</span> <span id="gc3">pos</span>: IsPos = n => n > 0;
+<span class="kw">const</span> <span id="gc4">bad</span>: Greet = () => 42; <span class="cm">// ✗ wrong return</span>
+<span class="kw">const</span> <span id="gc5">r</span>: <span class="kw">string</span> = hi(<span class="str">"Al"</span>); <span class="cm">// ✓</span>`,
+  steps:[
+    "type Greet = (name: string) => string — function signature alias",
+    "type IsPos = (n: number) => boolean — another function alias",
+    "hi: Greet = name => 'Hi '+name — returns string, matches ✓",
+    "pos: IsPos = n => n > 0 — n>0 is boolean, matches ✓",
+    "bad: Greet = () => 42 — returns number, Greet expects string: ERROR ✗",
+    "r: string = hi('Al') — hi returns string → r: string ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"alias: Greet",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"alias: IsPos",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"check: hi vs Greet",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"check: pos vs IsPos",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: bad vs Greet",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"call: hi('Al')",t:"f-cb"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"Greet: (string)→string"}],
+    [{t:"d-input",i:"→",v:"IsPos: (number)→boolean"}],
+    [{t:"d-transform",i:"⇒",v:"'Hi '+name → string"},{t:"log-green",i:"✓",v:"matches Greet ✓"}],
+    [{t:"d-transform",i:"⇒",v:"n>0 → boolean"},{t:"log-green",i:"✓",v:"matches IsPos ✓"}],
+    [{t:"d-special",i:"!",v:"() => 42 returns number"},{t:"log-red",i:"✗",v:"Return type 'number' not assignable to 'string'"}],
+    [{t:"d-transform",i:"⇒",v:"hi('Al') → string"},{t:"log-green",i:"✓",v:"r: string ✓"}],
+  ],
+  mem:[
+    {g:[{k:"Greet",v:"(str)→str",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Greet",v:"(str)→str"},{k:"IsPos",v:"(n)→bool",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Greet",v:"(str)→str"},{k:"hi",v:"Greet ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"hi",v:"Greet ✓"},{k:"pos",v:"IsPos ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"pos",v:"IsPos ✓"},{k:"bad",v:"Greet ✗",s:"mv-special"}],l:[],c:[{k:"return",v:"number ≠ string",s:"mv-special"}]},
+    {g:[{k:"hi",v:"Greet ✓"},{k:"r",v:"string ✓",s:"mv-new"}],l:[],c:[]},
+  ],
+},{
+  name:"Recursive type aliases",
+  desc:"Type aliases can reference themselves — useful for tree structures, linked lists, and nested JSON. TypeScript resolves the recursion lazily and validates each level independently.",
+  code:`<span class="kw">type</span> <span id="gc0">Tree</span> = {
+  <span id="gc1">value</span>: <span class="kw">number</span>;
+  <span id="gc2">left?</span>: Tree;
+  <span id="gc3">right?</span>: Tree;
+};
+<span class="kw">const</span> <span id="gc4">t</span>: Tree = {
+  value: 1,  left: { value: 2 },
+  <span id="gc5">right</span>: { value: 3, left: { value: 4 } }
+};`,
+  steps:[
+    "type Tree — recursive alias: a Tree can contain other Trees",
+    "value: number — every Tree node has a required numeric value",
+    "left?: Tree — optional left child; self-referencing type ✓",
+    "right?: Tree — optional right child; recursion is valid in type aliases ✓",
+    "t root node — {value:1, left, right} satisfies Tree shape ✓",
+    "right.left = {value:4} — arbitrary depth; TS validates each level ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"alias: Tree (recursive)",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Tree.value: number",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Tree.left?: Tree",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Tree.right?: Tree",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"check: t vs Tree",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"check: nested Tree",t:"f-cb"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"Tree = { value, left?, right? }"},{t:"d-transform",i:"⇒",v:"self-referencing alias registered"}],
+    [{t:"d-input",i:"→",v:"value: number — required"}],
+    [{t:"d-transform",i:"⇒",v:"left?: Tree — optional recursion"},{t:"log-purple",i:"i",v:"TS resolves lazily — no infinite loop"}],
+    [{t:"d-transform",i:"⇒",v:"right?: Tree — optional recursion"}],
+    [{t:"d-transform",i:"⇒",v:"value:1, left:{v:2}, right:{v:3}"},{t:"log-green",i:"✓",v:"t satisfies Tree ✓"}],
+    [{t:"d-transform",i:"⇒",v:"right.left = {value:4} also Tree"},{t:"log-green",i:"✓",v:"nested recursion validated ✓"}],
+  ],
+  mem:[
+    {g:[{k:"Tree",v:"recursive alias",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Tree",v:"{value:n,...}",s:"mv-changed"}],l:[],c:[]},
+    {g:[{k:"Tree",v:"{value,left?,..}",s:"mv-changed"}],l:[],c:[]},
+    {g:[{k:"Tree",v:"{value,left?,right?}",s:"mv-changed"}],l:[],c:[]},
+    {g:[{k:"Tree",v:"{value,left?,right?}"},{k:"t",v:"Tree (root) ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"t",v:"Tree ✓"}],l:[],c:[{k:"depth",v:"t→right→left",s:"mv-changed"},{k:"valid",v:"each level ✓",s:"mv-changed"}]},
+  ],
+}]
+},
+{num:5,title:"Union Types",tag:"A | B · typeof · in · discriminated union",
+concept:"A <strong>union type</strong> (<code>A | B</code>) means a value can be <em>either</em> type A or type B. TypeScript requires you to <strong>narrow</strong> the union before using type-specific methods — you must tell the compiler which branch you're in. Use <code>typeof</code> for primitives, the <code>in</code> operator for object shapes, and a shared <em>discriminant</em> property (a literal string tag) for discriminated unions — the most powerful and exhaustive pattern.",
+callout:null,
+refs:[
+  {lbl:"|",cls:"",title:"Union operator",sub:"value is A or B"},
+  {lbl:"typeof",cls:"",title:"Primitive guard",sub:"narrows string|number|boolean"},
+  {lbl:"in",cls:"",title:"Property guard",sub:"narrows object unions"},
+  {lbl:"kind",cls:"",title:"Discriminant",sub:"literal tag for union branch"},
+],
+memPanelTitle:"Type environment",
+legend:[
+  {color:"var(--purple)",label:"Union type"},
+  {color:"var(--green)",label:"Narrowed ✓"},
+  {color:"var(--orange)",label:"Currently narrowing"},
+  {color:"var(--red)",label:"Type error ✗"},
+],
+examples:[{
+  name:"Basic union and typeof narrowing",
+  desc:"A <code>string | number</code> union can hold either. Use <code>typeof</code> inside an <code>if</code> to narrow — TypeScript tracks which type is active in each branch.",
+  code:`<span class="kw">function</span> format(<span id="gc0">val</span>: <span class="kw">string</span> | <span class="kw">number</span>): <span class="kw">string</span> {
+  <span class="kw">if</span> (<span id="gc1"><span class="kw">typeof</span> val === <span class="str">"string"</span></span>) {
+    <span class="kw">return</span> <span id="gc2">val.toUpperCase()</span>; <span class="cm">// val: string</span>
+  }
+  <span class="kw">return</span> <span id="gc3">val.toFixed(2)</span>; <span class="cm">// val: number</span>
+}
+<span id="gc4">format(<span class="str">"hello"</span>)</span>; <span class="cm">// → "HELLO"</span>
+<span id="gc5">format(3.14)</span>;    <span class="cm">// → "3.14"</span>`,
+  steps:[
+    "val: string | number — parameter accepts either type",
+    "typeof val === 'string' — type guard: TS narrows val to string inside the if",
+    "val.toUpperCase() — safe! TS knows val: string in this branch ✓",
+    "val.toFixed(2) — safe! After if, TS knows val: number in this branch ✓",
+    "format('hello') — string arg → takes string branch → 'HELLO'",
+    "format(3.14) — number arg → takes number branch → '3.14'",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"format(val: str|num)",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"typeof check",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"val: string branch",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"val: number branch",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"call: format('hello')",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"call: format(3.14)",t:"f-active"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"val: string | number"}],
+    [{t:"d-transform",i:"⇒",v:"typeof val === 'string'"},{t:"log-orange",i:"!",v:"narrowing: string branch entered"}],
+    [{t:"d-transform",i:"⇒",v:"val narrowed to: string"},{t:"log-green",i:"✓",v:".toUpperCase() available ✓"}],
+    [{t:"d-transform",i:"⇒",v:"val narrowed to: number"},{t:"log-green",i:"✓",v:".toFixed() available ✓"}],
+    [{t:"d-input",i:"→",v:"'hello' → string branch"},{t:"log-green",i:"✓",v:"→ 'HELLO'"}],
+    [{t:"d-input",i:"→",v:"3.14 → number branch"},{t:"log-green",i:"✓",v:"→ '3.14'"}],
+  ],
+  mem:[
+    {g:[{k:"format",v:"(str|num)→str",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"format",v:"(str|num)→str"}],l:[{k:"val",v:"string | number"},{k:"check",v:"typeof val",s:"mv-new"}],c:[]},
+    {g:[{k:"format",v:"(str|num)→str"}],l:[{k:"val",v:"string (narrowed)",s:"mv-changed"}],c:[]},
+    {g:[{k:"format",v:"(str|num)→str"}],l:[{k:"val",v:"number (narrowed)",s:"mv-changed"}],c:[]},
+    {g:[{k:"format",v:"(str|num)→str"}],l:[{k:"val",v:"'hello': string"}],c:[{k:"result",v:"'HELLO'",s:"mv-new"}]},
+    {g:[{k:"format",v:"(str|num)→str"}],l:[{k:"val",v:"3.14: number"}],c:[{k:"result",v:"'3.14'",s:"mv-new"}]},
+  ],
+},{
+  name:"Object union narrowing with 'in'",
+  desc:"When unioning object types that have different property names, use the <code>in</code> operator to check which properties exist — TypeScript narrows the union accordingly.",
+  code:`<span class="kw">type</span> Cat = { meow: () => <span class="kw">void</span> };
+<span class="kw">type</span> Dog = { bark: () => <span class="kw">void</span> };
+<span class="kw">function</span> speak(<span id="gc0">pet</span>: Cat | Dog) {
+  <span class="kw">if</span> (<span id="gc1"><span class="str">"meow"</span> <span class="kw">in</span> pet</span>) {
+    <span id="gc2">pet.meow()</span>; <span class="cm">// pet: Cat</span>
+  } <span class="kw">else</span> {
+    <span id="gc3">pet.bark()</span>; <span class="cm">// pet: Dog</span>
+  }
+}
+<span id="gc4">speak({ meow() {} })</span>;
+<span id="gc5">speak({ bark() {} })</span>;`,
+  steps:[
+    "pet: Cat | Dog — parameter is either a Cat or a Dog",
+    "'meow' in pet — checks if meow property exists; narrows to Cat if true",
+    "pet.meow() — TS knows pet: Cat in the true branch ✓",
+    "pet.bark() — TS knows pet: Dog in the else branch ✓",
+    "speak({meow(){}}) — passes Cat check → meow() called ✓",
+    "speak({bark(){}}) — fails meow check → bark() called ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"speak(pet: Cat|Dog)",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"'meow' in pet check",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"pet: Cat branch",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"pet: Dog branch",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"call: speak(Cat)",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"call: speak(Dog)",t:"f-active"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"pet: Cat | Dog"}],
+    [{t:"d-transform",i:"⇒",v:"'meow' in pet → property check"},{t:"log-orange",i:"!",v:"narrows union by property presence"}],
+    [{t:"d-transform",i:"⇒",v:"pet narrowed to: Cat"},{t:"log-green",i:"✓",v:".meow() is safe ✓"}],
+    [{t:"d-transform",i:"⇒",v:"pet narrowed to: Dog"},{t:"log-green",i:"✓",v:".bark() is safe ✓"}],
+    [{t:"d-input",i:"→",v:"arg has meow → Cat branch"},{t:"log-green",i:"✓",v:"meow() called ✓"}],
+    [{t:"d-input",i:"→",v:"arg has bark → Dog branch"},{t:"log-green",i:"✓",v:"bark() called ✓"}],
+  ],
+  mem:[
+    {g:[{k:"speak",v:"(Cat|Dog)→void",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"speak",v:"(Cat|Dog)→void"}],l:[{k:"pet",v:"Cat | Dog"},{k:"check",v:"'meow' in pet",s:"mv-new"}],c:[]},
+    {g:[{k:"speak",v:"(Cat|Dog)→void"}],l:[{k:"pet",v:"Cat (narrowed)",s:"mv-changed"}],c:[]},
+    {g:[{k:"speak",v:"(Cat|Dog)→void"}],l:[{k:"pet",v:"Dog (narrowed)",s:"mv-changed"}],c:[]},
+    {g:[{k:"speak",v:"(Cat|Dog)→void"}],l:[{k:"pet",v:"Cat"}],c:[{k:"called",v:"meow()",s:"mv-new"}]},
+    {g:[{k:"speak",v:"(Cat|Dog)→void"}],l:[{k:"pet",v:"Dog"}],c:[{k:"called",v:"bark()",s:"mv-new"}]},
+  ],
+},{
+  name:"Discriminated unions",
+  desc:"Add a shared <em>literal</em> property (the discriminant) to each union member. TypeScript can narrow exhaustively by checking this tag — no runtime guessing needed.",
+  code:`<span class="kw">type</span> Circle = { kind: <span id="gc0"><span class="str">"circle"</span></span>; r: <span class="kw">number</span> };
+<span class="kw">type</span> Rect   = { kind: <span id="gc1"><span class="str">"rect"</span></span>; w: <span class="kw">number</span>; h: <span class="kw">number</span> };
+<span class="kw">type</span> <span id="gc2">Shape</span>  = Circle | Rect;
+<span class="kw">function</span> area(s: Shape): <span class="kw">number</span> {
+  <span class="kw">if</span> (<span id="gc3">s.kind === <span class="str">"circle"</span></span>)
+    <span class="kw">return</span> Math.PI * <span id="gc4">s.r</span> * s.r;
+  <span class="kw">return</span> <span id="gc5">s.w</span> * s.h;
+}`,
+  steps:[
+    "kind: 'circle' — literal string tag uniquely identifies this union member",
+    "kind: 'rect' — different literal tag for the other member",
+    "type Shape = Circle | Rect — the discriminated union",
+    "s.kind === 'circle' — TS narrows s to Circle in the true branch ✓",
+    "s.r — safe! TS knows s: Circle here; r exists ✓",
+    "s.w * s.h — else branch: TS knows s: Rect; w and h exist ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"Circle.kind: 'circle'",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Rect.kind: 'rect'",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Shape = Circle|Rect",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"s.kind check",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"s: Circle branch",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"s: Rect branch",t:"f-cb"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"kind: 'circle' — literal discriminant"},{t:"log-purple",i:"i",v:"literal types enable exhaustive narrowing"}],
+    [{t:"d-input",i:"→",v:"kind: 'rect' — different literal tag"}],
+    [{t:"d-transform",i:"⇒",v:"Shape = Circle | Rect (discriminated)"}],
+    [{t:"d-transform",i:"⇒",v:"s.kind === 'circle'"},{t:"log-orange",i:"!",v:"s narrowed to Circle in true branch"}],
+    [{t:"d-transform",i:"⇒",v:"s: Circle — s.r is available"},{t:"log-green",i:"✓",v:"Math.PI * s.r * s.r ✓"}],
+    [{t:"d-transform",i:"⇒",v:"s: Rect — s.w, s.h available"},{t:"log-green",i:"✓",v:"s.w * s.h ✓ (exhaustive)"}],
+  ],
+  mem:[
+    {g:[{k:"Circle",v:"{kind:'circle',r}",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Circle",v:"{kind:'circle',r}"},{k:"Rect",v:"{kind:'rect',w,h}",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Shape",v:"Circle | Rect",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Shape",v:"Circle | Rect"}],l:[{k:"s",v:"Circle | Rect"},{k:"check",v:"s.kind",s:"mv-new"}],c:[]},
+    {g:[{k:"Shape",v:"Circle | Rect"}],l:[{k:"s",v:"Circle (narrowed)",s:"mv-changed"},{k:"s.r",v:"number ✓",s:"mv-new"}],c:[]},
+    {g:[{k:"Shape",v:"Circle | Rect"}],l:[{k:"s",v:"Rect (narrowed)",s:"mv-changed"},{k:"s.w,s.h",v:"number ✓",s:"mv-new"}],c:[]},
+  ],
+}]
+},
+{num:6,title:"Intersection Types",tag:"A & B · merge shapes · never conflict",
+concept:"An <strong>intersection type</strong> (<code>A &amp; B</code>) means a value must satisfy <em>both</em> types simultaneously. The result has all properties of A <em>and</em> all properties of B. Intersections are often used to compose interfaces or add capabilities to an existing type. If two types share the same property key with incompatible types, the intersected property becomes <code>never</code> — no value can satisfy it.",
+callout:null,
+refs:[
+  {lbl:"&",cls:"",title:"Intersection operator",sub:"value must satisfy both A and B"},
+  {lbl:"merge",cls:"",title:"All properties",sub:"result has props from every part"},
+  {lbl:"conflict",cls:"",title:"Same key diff types",sub:"yields never — unusable"},
+],
+memPanelTitle:"Type environment",
+legend:[
+  {color:"var(--purple)",label:"Intersection type"},
+  {color:"var(--green)",label:"Satisfied ✓"},
+  {color:"var(--red)",label:"Missing / conflict ✗"},
+  {color:"var(--orange)",label:"Currently checking"},
+],
+examples:[{
+  name:"Merging two interfaces with &",
+  desc:"Intersect two interfaces to create a type that requires all properties from both. Any object assigned to the intersection must satisfy every property of every member.",
+  code:`<span class="kw">interface</span> <span id="gc0">Named</span> { name: <span class="kw">string</span> }
+<span class="kw">interface</span> <span id="gc1">Aged</span>  { age: <span class="kw">number</span> }
+<span class="kw">type</span> <span id="gc2">Person</span> = Named &amp; Aged;
+<span class="kw">const</span> <span id="gc3">p</span>: Person = { name: <span class="str">"Alice"</span>, age: 30 };
+<span class="kw">const</span> <span id="gc4">bad</span>: Person = { name: <span class="str">"Bob"</span> }; <span class="cm">// ✗ age missing</span>
+<span id="gc5">p.name</span>; p.age; <span class="cm">// ✓ both sides accessible</span>`,
+  steps:[
+    "Named interface — has name: string",
+    "Aged interface — has age: number",
+    "Person = Named & Aged — result requires BOTH name AND age",
+    "p = {name:'Alice', age:30} — satisfies both Named and Aged ✓",
+    "bad = {name:'Bob'} — age is missing; Person requires both: ERROR ✗",
+    "p.name and p.age — all properties from both sides accessible ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"Named interface",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Aged interface",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Person = Named & Aged",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"check: p vs Person",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: bad vs Person",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"p.name, p.age",t:"f-cb"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"Named: {name: string}"}],
+    [{t:"d-input",i:"→",v:"Aged: {age: number}"}],
+    [{t:"d-transform",i:"⇒",v:"Person = Named & Aged"},{t:"d-output",i:"←",v:"Person: {name:string, age:number}"}],
+    [{t:"d-transform",i:"⇒",v:"name ✓, age ✓"},{t:"log-green",i:"✓",v:"p satisfies Person ✓"}],
+    [{t:"d-special",i:"!",v:"age missing from bad"},{t:"log-red",i:"✗",v:"Property 'age' missing in type"}],
+    [{t:"d-transform",i:"⇒",v:"p has name (Named) and age (Aged)"},{t:"log-green",i:"✓",v:"all intersection properties accessible ✓"}],
+  ],
+  mem:[
+    {g:[{k:"Named",v:"{name:str}",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Named",v:"{name:str}"},{k:"Aged",v:"{age:num}",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Named",v:"{name:str}"},{k:"Aged",v:"{age:num}"},{k:"Person",v:"Named&Aged",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Person",v:"Named&Aged"},{k:"p",v:"Person ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"p",v:"Person ✓"},{k:"bad",v:"Person ✗",s:"mv-special"}],l:[],c:[{k:"missing",v:"age: number",s:"mv-special"}]},
+    {g:[{k:"p",v:"Person ✓"}],l:[],c:[{k:"p.name",v:"'Alice': string",s:"mv-changed"},{k:"p.age",v:"30: number",s:"mv-changed"}]},
+  ],
+},{
+  name:"Composing capabilities with intersection",
+  desc:"Intersection types are a clean way to compose behaviour — create a type that must implement multiple interfaces. The value must provide every method and property from all intersected types.",
+  code:`<span class="kw">interface</span> <span id="gc0">Printable</span> { print(): <span class="kw">void</span> }
+<span class="kw">interface</span> <span id="gc1">Loggable</span>  { log(): <span class="kw">void</span> }
+<span class="kw">type</span> <span id="gc2">Service</span> = Printable &amp; Loggable;
+<span class="kw">const</span> <span id="gc3">svc</span>: Service = {
+  <span id="gc4">print</span>() { console.log(<span class="str">"printing"</span>); },
+  <span id="gc5">log</span>()   { console.log(<span class="str">"logging"</span>); },
+};`,
+  steps:[
+    "Printable — interface requiring a print() method",
+    "Loggable — interface requiring a log() method",
+    "Service = Printable & Loggable — must implement BOTH methods",
+    "svc: Service = {...} — object literal checked against intersection",
+    "print() implemented — satisfies Printable ✓",
+    "log() implemented — satisfies Loggable; svc is fully valid ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"Printable interface",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Loggable interface",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Service = P & L",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"check: svc vs Service",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"print() ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"log() ✓ — valid",t:"f-cb"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"Printable: { print(): void }"}],
+    [{t:"d-input",i:"→",v:"Loggable: { log(): void }"}],
+    [{t:"d-transform",i:"⇒",v:"Service must have print() AND log()"}],
+    [{t:"d-input",i:"→",v:"checking svc against Service..."}],
+    [{t:"d-transform",i:"⇒",v:"print() present"},{t:"log-green",i:"✓",v:"Printable satisfied ✓"}],
+    [{t:"d-transform",i:"⇒",v:"log() present"},{t:"log-green",i:"✓",v:"Loggable satisfied — svc: Service ✓"}],
+  ],
+  mem:[
+    {g:[{k:"Printable",v:"{print()}",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Printable",v:"{print()}"},{k:"Loggable",v:"{log()}",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Service",v:"P & L",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Service",v:"P & L"},{k:"svc",v:"checking...",s:"mv-changed"}],l:[],c:[]},
+    {g:[{k:"svc",v:"Service (partial ✓)"}],l:[{k:"print",v:"(): void ✓",s:"mv-new"}],c:[]},
+    {g:[{k:"svc",v:"Service ✓",s:"mv-changed"}],l:[{k:"print",v:"(): void ✓"},{k:"log",v:"(): void ✓",s:"mv-new"}],c:[]},
+  ],
+},{
+  name:"Intersection conflicts → never",
+  desc:"If two types in an intersection share the same property key but with incompatible types, the result for that property is <code>never</code> — no value can satisfy both constraints simultaneously.",
+  code:`<span class="kw">type</span> <span id="gc0">A</span> = { x: <span class="kw">string</span> };
+<span class="kw">type</span> <span id="gc1">B</span> = { x: <span class="kw">number</span> };
+<span class="kw">type</span> <span id="gc2">C</span> = A &amp; B; <span class="cm">// x: string &amp; number</span>
+<span class="kw">const</span> <span id="gc3">c1</span>: C = { x: <span class="str">"hello"</span> }; <span class="cm">// ✗ x: never</span>
+<span class="kw">const</span> <span id="gc4">c2</span>: C = { x: 42 };     <span class="cm">// ✗ x: never</span>
+<span id="gc5"><span class="cm">// no value satisfies string &amp; number</span></span>`,
+  steps:[
+    "A = { x: string } — x must be a string",
+    "B = { x: number } — x must be a number",
+    "C = A & B — x: string & number — no value is both string and number",
+    "c1 = {x:'hello'} — 'hello' is string, but C.x is never: ERROR ✗",
+    "c2 = {x:42} — 42 is number, but C.x is never: ERROR ✗",
+    "Lesson: intersecting incompatible keys yields never — avoid this pattern",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"A: {x: string}",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"B: {x: number}",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"C = A & B → conflict",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: c1 vs C",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: c2 vs C",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"x: never — unusable",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"A.x: string"}],
+    [{t:"d-input",i:"→",v:"B.x: number"}],
+    [{t:"d-special",i:"!",v:"x: string & number = never"},{t:"log-red",i:"✗",v:"conflicting key types → never"}],
+    [{t:"d-special",i:"!",v:"'hello' string ≠ never"},{t:"log-red",i:"✗",v:"Type 'string' not assignable to 'never'"}],
+    [{t:"d-special",i:"!",v:"42 number ≠ never"},{t:"log-red",i:"✗",v:"Type 'number' not assignable to 'never'"}],
+    [{t:"d-special",i:"!",v:"x: never — unsatisfiable"},{t:"log-orange",i:"!",v:"avoid intersecting same key with different types"}],
+  ],
+  mem:[
+    {g:[{k:"A",v:"{x:string}",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"A",v:"{x:string}"},{k:"B",v:"{x:number}",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"C",v:"{x:never} ✗",s:"mv-special"}],l:[],c:[{k:"conflict",v:"str & num = never",s:"mv-special"}]},
+    {g:[{k:"C",v:"{x:never}"},{k:"c1",v:"✗",s:"mv-special"}],l:[],c:[{k:"x",v:"string ≠ never",s:"mv-special"}]},
+    {g:[{k:"C",v:"{x:never}"},{k:"c2",v:"✗",s:"mv-special"}],l:[],c:[{k:"x",v:"number ≠ never",s:"mv-special"}]},
+    {g:[{k:"C",v:"{x:never}"}],l:[],c:[{k:"lesson",v:"avoid key conflicts",s:"mv-special"}]},
+  ],
+}]
+},
+{num:7,title:"Tuples",tag:"[string, number] · labeled · rest elements",
+concept:"A <strong>tuple</strong> is a fixed-length array where each position has its own specific type. Unlike <code>number[]</code> (where all elements are numbers), a tuple like <code>[string, number]</code> says: position 0 must be a string, position 1 must be a number. TypeScript tracks each index independently. Tuples can have <em>labels</em> for IDE hints and <em>rest elements</em> (<code>...T[]</code>) for a variable-length tail.",
+callout:null,
+refs:[
+  {lbl:"[A, B]",cls:"",title:"Fixed-length typed array",sub:"each index has its own type"},
+  {lbl:"labeled",cls:"",title:"Named positions",sub:"[x: number, y: number]"},
+  {lbl:"rest",cls:"",title:"Variable tail",sub:"[first: string, ...rest: number[]]"},
+],
+memPanelTitle:"Type environment",
+legend:[
+  {color:"var(--purple)",label:"Tuple type"},
+  {color:"var(--green)",label:"Position valid ✓"},
+  {color:"var(--red)",label:"Position mismatch ✗"},
+  {color:"var(--orange)",label:"Currently checking"},
+],
+examples:[{
+  name:"Basic tuple — fixed positions",
+  desc:"Declare a tuple type with a bracket syntax. TypeScript knows the type at every index and will error if positions are swapped, missing, or out of bounds.",
+  code:`<span class="kw">let</span> <span id="gc0">pair</span>: [<span class="kw">string</span>, <span class="kw">number</span>];
+<span id="gc1">pair</span> = [<span class="str">"Alice"</span>, 30];   <span class="cm">// ✓</span>
+<span id="gc2">pair</span> = [30, <span class="str">"Alice"</span>]; <span class="cm">// ✗ wrong order</span>
+<span id="gc3">pair[0]</span>.toUpperCase(); <span class="cm">// ✓ string</span>
+<span id="gc4">pair[1]</span>.toFixed(2);    <span class="cm">// ✓ number</span>
+<span id="gc5">pair[2]</span>;               <span class="cm">// ✗ no index 2</span>`,
+  steps:[
+    "pair: [string, number] — pos 0 must be string, pos 1 must be number",
+    "pair = ['Alice', 30] — string at [0], number at [1]: valid ✓",
+    "pair = [30, 'Alice'] — number at [0] expects string: wrong order ✗",
+    "pair[0].toUpperCase() — TS knows [0] is string: safe ✓",
+    "pair[1].toFixed(2) — TS knows [1] is number: safe ✓",
+    "pair[2] — index 2 doesn't exist in [string, number]: ERROR ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"pair: [str,num]",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"assign: ['Alice',30]",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: [30,'Alice']",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"pair[0]: string",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"pair[1]: number",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: pair[2]",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"[0]: string, [1]: number"}],
+    [{t:"d-transform",i:"⇒",v:"[0]:'Alice'=string ✓, [1]:30=number ✓"},{t:"log-green",i:"✓",v:"tuple assignment valid ✓"}],
+    [{t:"d-special",i:"!",v:"[0]:30 expects string"},{t:"log-red",i:"✗",v:"Type '[number,string]' not '[string,number]'"}],
+    [{t:"d-transform",i:"⇒",v:"pair[0] type: string"},{t:"log-green",i:"✓",v:".toUpperCase() available ✓"}],
+    [{t:"d-transform",i:"⇒",v:"pair[1] type: number"},{t:"log-green",i:"✓",v:".toFixed() available ✓"}],
+    [{t:"d-special",i:"!",v:"index 2 out of bounds"},{t:"log-red",i:"✗",v:"Tuple type has no element at index '2'"}],
+  ],
+  mem:[
+    {g:[{k:"pair",v:"[str,num]",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"pair",v:"[str,num] ✓",s:"mv-changed"}],l:[],c:[{k:"[0]",v:"'Alice': string"},{k:"[1]",v:"30: number"}]},
+    {g:[{k:"pair",v:"[str,num] ✗",s:"mv-special"}],l:[],c:[{k:"error",v:"[0] str expected",s:"mv-special"}]},
+    {g:[{k:"pair",v:"[str,num]"}],l:[],c:[{k:"pair[0]",v:"string ✓",s:"mv-changed"}]},
+    {g:[{k:"pair",v:"[str,num]"}],l:[],c:[{k:"pair[1]",v:"number ✓",s:"mv-changed"}]},
+    {g:[{k:"pair",v:"[str,num]"}],l:[],c:[{k:"pair[2]",v:"✗ no index",s:"mv-special"}]},
+  ],
+},{
+  name:"Labeled tuples",
+  desc:"Add labels to tuple positions for better IDE tooltips. Labels are purely informational — they don't affect type checking, but they make the intent much clearer.",
+  code:`<span class="kw">type</span> RGB = [
+  <span id="gc0">red</span>: <span class="kw">number</span>,
+  <span id="gc1">green</span>: <span class="kw">number</span>,
+  <span id="gc2">blue</span>: <span class="kw">number</span>
+];
+<span class="kw">const</span> <span id="gc3">white</span>: RGB = [255, 255, 255];
+<span class="kw">function</span> <span id="gc4">mix</span>(c: RGB) {
+  <span class="kw">return</span> <span id="gc5">c[0] + c[1] + c[2]</span>;
+}`,
+  steps:[
+    "red: number — labeled first position; label shows in IDE hover hints",
+    "green: number — labeled second position",
+    "blue: number — labeled third position; all three are number",
+    "white = [255, 255, 255] — all three numbers fill RGB ✓",
+    "mix(c: RGB) — parameter typed as RGB tuple",
+    "c[0]+c[1]+c[2] — each index is number; arithmetic valid ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"RGB[0]: red:number",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"RGB[1]: green:number",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"RGB[2]: blue:number",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"check: white vs RGB",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"mix(c: RGB)",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"c[0]+c[1]+c[2]",t:"f-active"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"RGB[0] label: red"},{t:"log-purple",i:"i",v:"labels are IDE hints only — no runtime effect"}],
+    [{t:"d-input",i:"→",v:"RGB[1] label: green"}],
+    [{t:"d-input",i:"→",v:"RGB[2] label: blue"}],
+    [{t:"d-transform",i:"⇒",v:"[255,255,255] all number"},{t:"log-green",i:"✓",v:"white: RGB ✓"}],
+    [{t:"d-input",i:"→",v:"mix takes RGB tuple"}],
+    [{t:"d-transform",i:"⇒",v:"c[0],c[1],c[2] all number"},{t:"log-green",i:"✓",v:"addition valid ✓"}],
+  ],
+  mem:[
+    {g:[{k:"RGB",v:"[n,n,n]",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"RGB",v:"[n,n,n]"}],l:[{k:"[0]",v:"red: number",s:"mv-new"}],c:[]},
+    {g:[{k:"RGB",v:"[n,n,n]"}],l:[{k:"[0]",v:"red:n"},{k:"[1]",v:"green:n"},{k:"[2]",v:"blue:n",s:"mv-new"}],c:[]},
+    {g:[{k:"RGB",v:"[n,n,n]"},{k:"white",v:"RGB ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"white",v:"RGB ✓"},{k:"mix",v:"(RGB)→n",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"mix",v:"(RGB)→n"}],l:[{k:"c[0..2]",v:"all number",s:"mv-changed"}],c:[]},
+  ],
+},{
+  name:"Rest elements in tuples",
+  desc:"A tuple can end with a rest element (<code>...T[]</code>) to allow a variable number of additional elements of one type. The fixed positions still enforce their own types.",
+  code:`<span class="kw">type</span> StrNums = [<span id="gc0">first</span>: <span class="kw">string</span>, ...<span id="gc1">rest</span>: <span class="kw">number</span>[]];
+<span class="kw">const</span> <span id="gc2">t1</span>: StrNums = [<span class="str">"hi"</span>, 1, 2, 3];
+<span class="kw">const</span> <span id="gc3">t2</span>: StrNums = [<span class="str">"hi"</span>];
+<span class="kw">const</span> <span id="gc4">t3</span>: StrNums = [1, 2, 3]; <span class="cm">// ✗ first must be string</span>
+<span class="kw">const</span> [<span id="gc5">head</span>, ...tail] = t1; <span class="cm">// head:string tail:number[]</span>`,
+  steps:[
+    "first: string — fixed required first element must be a string",
+    "...rest: number[] — rest element: zero or more numbers after first",
+    "t1 = ['hi',1,2,3] — string first, then 3 numbers: valid ✓",
+    "t2 = ['hi'] — string first, empty rest (zero numbers ok): valid ✓",
+    "t3 = [1,2,3] — 1 is number, first expects string: ERROR ✗",
+    "[head,...tail] = t1 — head: string, tail: number[] ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"StrNums[0]: string",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"StrNums rest: number[]",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"check: t1 vs StrNums",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"check: t2 vs StrNums",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: t3 vs StrNums",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"destructure t1",t:"f-cb"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"[0] first: string — required"}],
+    [{t:"d-input",i:"→",v:"[1..] rest: number[] — variable length"},{t:"log-purple",i:"i",v:"rest must come last in tuple"}],
+    [{t:"d-transform",i:"⇒",v:"[0]:'hi'=string ✓, [1..3]=number ✓"},{t:"log-green",i:"✓",v:"t1: StrNums ✓"}],
+    [{t:"d-transform",i:"⇒",v:"[0]:'hi'=string ✓, rest=[] (ok)"},{t:"log-green",i:"✓",v:"t2: StrNums ✓"}],
+    [{t:"d-special",i:"!",v:"[0]:1 is number, expects string"},{t:"log-red",i:"✗",v:"Type 'number' not assignable to 'string'"}],
+    [{t:"d-transform",i:"⇒",v:"head:string, tail:number[]"},{t:"log-green",i:"✓",v:"destructuring preserves tuple types ✓"}],
+  ],
+  mem:[
+    {g:[{k:"StrNums",v:"[str,...n[]]",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"StrNums",v:"[str,...n[]]"}],l:[],c:[]},
+    {g:[{k:"StrNums",v:"[str,...n[]]"},{k:"t1",v:"StrNums ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"t1",v:"StrNums ✓"},{k:"t2",v:"StrNums ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"t2",v:"StrNums ✓"},{k:"t3",v:"StrNums ✗",s:"mv-special"}],l:[],c:[{k:"[0]",v:"num ≠ string",s:"mv-special"}]},
+    {g:[{k:"t1",v:"StrNums ✓"}],l:[],c:[{k:"head",v:"string ✓",s:"mv-new"},{k:"tail",v:"number[] ✓",s:"mv-new"}]},
+  ],
+}]
+},
+{num:8,title:"Enums",tag:"numeric enum · string enum · const enum",
+concept:"An <strong>enum</strong> defines a set of named constants. <em>Numeric enums</em> auto-assign incrementing numbers starting from 0. <em>String enums</em> require explicit string values — they're more debuggable because the value is readable at runtime. <em>Const enums</em> are completely erased at compile time and inlined as their literal values — zero runtime overhead but no reverse lookup.",
+callout:null,
+refs:[
+  {lbl:"enum",cls:"",title:"Named constants",sub:"auto-increments from 0"},
+  {lbl:"string enum",cls:"",title:"Explicit values",sub:"readable at runtime"},
+  {lbl:"const enum",cls:"",title:"Inlined at compile",sub:"no runtime object"},
+],
+memPanelTitle:"Type environment",
+legend:[
+  {color:"var(--purple)",label:"Enum type"},
+  {color:"var(--green)",label:"Valid member ✓"},
+  {color:"var(--orange)",label:"Reverse mapping"},
+  {color:"var(--red)",label:"Type error ✗"},
+],
+examples:[{
+  name:"Numeric enum",
+  desc:"Members of a numeric enum automatically receive incrementing numeric values starting at 0. TypeScript creates a two-way mapping: name → number and number → name.",
+  code:`<span class="kw">enum</span> <span id="gc0">Direction</span> { Up, Down, Left, Right }
+<span class="cm">// Up=0, Down=1, Left=2, Right=3</span>
+<span class="kw">const</span> <span id="gc1">d1</span> = Direction.Up;    <span class="cm">// 0</span>
+<span class="kw">const</span> <span id="gc2">d2</span> = Direction.Right;  <span class="cm">// 3</span>
+<span class="kw">const</span> <span id="gc3">rev</span> = Direction[0];    <span class="cm">// "Up"</span>
+<span class="kw">function</span> move(<span id="gc4">d</span>: Direction) { <span class="cm">/* ... */</span> }
+move(<span id="gc5">Direction.Down</span>); <span class="cm">// ✓</span>`,
+  steps:[
+    "enum Direction — TS auto-assigns: Up=0, Down=1, Left=2, Right=3",
+    "Direction.Up = 0 — first member gets value 0",
+    "Direction.Right = 3 — fourth member gets value 3",
+    "Direction[0] = 'Up' — reverse mapping: number → member name",
+    "move(d: Direction) — parameter restricted to Direction enum type",
+    "move(Direction.Down) — Direction.Down = 1, valid Direction value ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"enum Direction",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Direction.Up = 0",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"Direction.Right = 3",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"Direction[0] reverse",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"move: (Direction)→void",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"call: move(Direction.Down)",t:"f-cb"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"Up=0, Down=1, Left=2, Right=3"},{t:"log-purple",i:"i",v:"numeric enums auto-increment"}],
+    [{t:"d-transform",i:"⇒",v:"Direction.Up → 0"}],
+    [{t:"d-transform",i:"⇒",v:"Direction.Right → 3"}],
+    [{t:"d-transform",i:"⇒",v:"Direction[0] → 'Up'"},{t:"log-orange",i:"!",v:"reverse map: only numeric enums have this"}],
+    [{t:"d-input",i:"→",v:"move accepts Direction values"}],
+    [{t:"d-transform",i:"⇒",v:"Direction.Down = 1 is Direction"},{t:"log-green",i:"✓",v:"valid enum member ✓"}],
+  ],
+  mem:[
+    {g:[{k:"Direction",v:"enum {0..3}",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Direction",v:"enum"},{k:"d1",v:"Direction.Up=0",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"d1",v:"0"},{k:"d2",v:"Direction.Right=3",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"d2",v:"3"},{k:"rev",v:"'Up' (reverse)",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"move",v:"(Direction)→void",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"move",v:"(Direction)→void"}],l:[{k:"d",v:"Direction.Down=1 ✓",s:"mv-changed"}],c:[]},
+  ],
+},{
+  name:"String enum",
+  desc:"String enum members must be assigned explicit string values. They don't have reverse mappings, but their values are readable at runtime — great for logging, APIs, and debugging.",
+  code:`<span class="kw">enum</span> <span id="gc0">Status</span> {
+  Active   = <span class="str">"ACTIVE"</span>,
+  Inactive = <span class="str">"INACTIVE"</span>,
+}
+<span class="kw">function</span> check(s: Status) {
+  <span class="kw">if</span> (<span id="gc1">s === Status.Active</span>) console.log(<span class="str">"live"</span>);
+}
+check(<span id="gc2">Status.Active</span>);    <span class="cm">// ✓</span>
+check(<span id="gc3"><span class="str">"ACTIVE"</span></span>);         <span class="cm">// ✗ string ≠ Status</span>
+<span class="kw">const</span> <span id="gc4">s</span> = Status.Inactive; <span class="cm">// "INACTIVE"</span>
+<span id="gc5">s === <span class="str">"INACTIVE"</span></span>; <span class="cm">// true at runtime</span>`,
+  steps:[
+    "enum Status — string enum; each member needs an explicit string value",
+    "s === Status.Active — compare with enum member, not raw string",
+    "check(Status.Active) — valid Status value passed ✓",
+    "check('ACTIVE') — raw string is not assignable to Status type ✗",
+    "Status.Inactive = 'INACTIVE' — string enum members hold their string",
+    "s === 'INACTIVE' — true at runtime; string enums compile to their strings",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"enum Status (string)",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"s === Status.Active",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"check(Status.Active)",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: check('ACTIVE')",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"Status.Inactive",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"s === 'INACTIVE'",t:"f-active"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"Status.Active='ACTIVE', Status.Inactive='INACTIVE'"},{t:"log-purple",i:"i",v:"string enums have no reverse map"}],
+    [{t:"d-transform",i:"⇒",v:"compare using enum member name"}],
+    [{t:"d-transform",i:"⇒",v:"Status.Active is Status"},{t:"log-green",i:"✓",v:"valid enum argument ✓"}],
+    [{t:"d-special",i:"!",v:"'ACTIVE' is string, not Status"},{t:"log-red",i:"✗",v:"Argument of type 'string' not assignable to 'Status'"}],
+    [{t:"d-transform",i:"⇒",v:"Status.Inactive → 'INACTIVE' (string)"}],
+    [{t:"d-transform",i:"⇒",v:"s = 'INACTIVE', 'INACTIVE' = 'INACTIVE'"},{t:"log-green",i:"✓",v:"true at runtime ✓"}],
+  ],
+  mem:[
+    {g:[{k:"Status",v:"string enum",s:"mv-new"}],l:[],c:[{k:"Active",v:"'ACTIVE'"},{k:"Inactive",v:"'INACTIVE'"}]},
+    {g:[{k:"Status",v:"string enum"}],l:[{k:"s",v:"Status"}],c:[]},
+    {g:[{k:"Status",v:"string enum"}],l:[{k:"arg",v:"Status.Active ✓",s:"mv-changed"}],c:[]},
+    {g:[{k:"Status",v:"string enum"}],l:[{k:"arg",v:"string ✗",s:"mv-special"}],c:[{k:"error",v:"string ≠ Status",s:"mv-special"}]},
+    {g:[{k:"s",v:"Status.Inactive",s:"mv-new"}],l:[],c:[{k:"value",v:"'INACTIVE': string"}]},
+    {g:[{k:"s",v:"'INACTIVE'"}],l:[],c:[{k:"===",v:"'INACTIVE' → true",s:"mv-changed"}]},
+  ],
+},{
+  name:"Const enum — inlined at compile time",
+  desc:"A <code>const enum</code> is completely erased during compilation. Each usage is replaced with the literal numeric value — no runtime object is created. This gives zero overhead but means no reverse lookup.",
+  code:`<span class="kw">const</span> <span class="kw">enum</span> <span id="gc0">Color</span> { Red, Green, Blue }
+<span class="kw">const</span> <span id="gc1">r</span> = Color.Red;   <span class="cm">// compiled → 0</span>
+<span class="kw">const</span> <span id="gc2">g</span> = Color.Green; <span class="cm">// compiled → 1</span>
+<span class="kw">const</span> <span id="gc3">b</span> = Color.Blue;  <span class="cm">// compiled → 2</span>
+<span id="gc4">r === 0</span>;  <span class="cm">// true — inlined</span>
+<span id="gc5"><span class="cm">// Color object does NOT exist at runtime</span></span>`,
+  steps:[
+    "const enum Color — compile-time only; no JS object will be emitted",
+    "Color.Red → compiled to: const r = 0 (literal inlined)",
+    "Color.Green → compiled to: const g = 1 (literal inlined)",
+    "Color.Blue → compiled to: const b = 2 (literal inlined)",
+    "r === 0 — true; the enum member was replaced by its value",
+    "Color object doesn't exist at runtime — no reverse lookup possible",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"const enum Color",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Color.Red → 0",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"Color.Green → 1",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"Color.Blue → 2",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"r === 0 (inlined)",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"no Color at runtime",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"const enum — erased at compile"},{t:"log-orange",i:"!",v:"no Color object in emitted JS"}],
+    [{t:"d-transform",i:"⇒",v:"Color.Red → inlined as: 0"}],
+    [{t:"d-transform",i:"⇒",v:"Color.Green → inlined as: 1"}],
+    [{t:"d-transform",i:"⇒",v:"Color.Blue → inlined as: 2"}],
+    [{t:"d-transform",i:"⇒",v:"r = 0; 0 === 0 → true"},{t:"log-green",i:"✓",v:"inlined literal comparison ✓"}],
+    [{t:"d-special",i:"!",v:"Color[0] would fail at runtime"},{t:"log-orange",i:"!",v:"no reverse map — use regular enum if needed"}],
+  ],
+  mem:[
+    {g:[{k:"Color",v:"const enum (erased)",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Color",v:"erased"},{k:"r",v:"0 (was Color.Red)",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"r",v:"0"},{k:"g",v:"1 (was Color.Green)",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"r",v:"0"},{k:"g",v:"1"},{k:"b",v:"2 (was Color.Blue)",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"r",v:"0"}],l:[],c:[{k:"0===0",v:"true ✓",s:"mv-changed"}]},
+    {g:[{k:"r",v:"0"},{k:"g",v:"1"},{k:"b",v:"2"}],l:[],c:[{k:"Color obj",v:"does not exist",s:"mv-special"}]},
+  ],
+}]
+},
+{num:9,title:"Generics",tag:"<T> · type parameter · constraint · extends",
+concept:"<strong>Generics</strong> let you write functions, interfaces, and classes that work with <em>any type</em> while preserving full type safety. The type parameter <code>&lt;T&gt;</code> is a placeholder filled in at each call site. TypeScript infers T from the argument you pass. Use <code>T extends U</code> to <em>constrain</em> T — requiring it to have certain properties — so you can access them safely inside the function.",
+callout:null,
+refs:[
+  {lbl:"<T>",cls:"",title:"Type parameter",sub:"placeholder filled at call site"},
+  {lbl:"infer",cls:"",title:"TS infers T",sub:"from the argument passed"},
+  {lbl:"extends",cls:"",title:"Constraint",sub:"T must satisfy shape U"},
+],
+memPanelTitle:"Type environment",
+legend:[
+  {color:"var(--purple)",label:"Generic type"},
+  {color:"var(--green)",label:"T resolved ✓"},
+  {color:"var(--red)",label:"Constraint violated ✗"},
+  {color:"var(--orange)",label:"T being inferred"},
+],
+examples:[{
+  name:"Generic function — identity",
+  desc:"The simplest generic: a function that returns exactly what was passed in. Without generics you'd lose the specific type; with <code>&lt;T&gt;</code> the return type matches the input type.",
+  code:`<span class="kw">function</span> identity&lt;<span id="gc0">T</span>&gt;(val: T): T { <span class="kw">return</span> val; }
+<span class="kw">const</span> <span id="gc1">n</span> = identity(42);
+<span class="kw">const</span> <span id="gc2">s</span> = identity(<span class="str">"hello"</span>);
+<span class="kw">const</span> <span id="gc3">b</span> = identity(<span class="kw">true</span>);
+<span class="kw">const</span> <span id="gc4">arr</span> = identity([1, 2, 3]);
+<span class="kw">const</span> <span id="gc5">x</span> = identity&lt;<span class="kw">string</span>&gt;(42); <span class="cm">// ✗</span>`,
+  steps:[
+    "<T> type parameter — T is a placeholder; filled in at each call",
+    "identity(42) — T inferred as number; returns number; n: number ✓",
+    "identity('hello') — T inferred as string; s: string ✓",
+    "identity(true) — T inferred as boolean; b: boolean ✓",
+    "identity([1,2,3]) — T inferred as number[]; arr: number[] ✓",
+    "identity<string>(42) — explicit T=string but 42 is number: ERROR ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"identity<T>",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"T=number → n:number",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"T=string → s:string",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"T=boolean → b:boolean",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"T=number[] → arr:number[]",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: T=string, arg=number",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"T = placeholder type"},{t:"log-purple",i:"i",v:"inferred at each call site"}],
+    [{t:"d-transform",i:"⇒",v:"T inferred: number"},{t:"log-green",i:"✓",v:"n: number ✓"}],
+    [{t:"d-transform",i:"⇒",v:"T inferred: string"},{t:"log-green",i:"✓",v:"s: string ✓"}],
+    [{t:"d-transform",i:"⇒",v:"T inferred: boolean"},{t:"log-green",i:"✓",v:"b: boolean ✓"}],
+    [{t:"d-transform",i:"⇒",v:"T inferred: number[]"},{t:"log-green",i:"✓",v:"arr: number[] ✓"}],
+    [{t:"d-special",i:"!",v:"T=string, 42 is number"},{t:"log-red",i:"✗",v:"Argument 'number' not assignable to 'string'"}],
+  ],
+  mem:[
+    {g:[{k:"identity",v:"<T>(T)→T",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"identity",v:"<T>(T)→T"},{k:"n",v:"number ✓",s:"mv-new"}],l:[],c:[{k:"T",v:"number (inferred)"}]},
+    {g:[{k:"identity",v:"<T>(T)→T"},{k:"s",v:"string ✓",s:"mv-new"}],l:[],c:[{k:"T",v:"string (inferred)"}]},
+    {g:[{k:"s",v:"string ✓"},{k:"b",v:"boolean ✓",s:"mv-new"}],l:[],c:[{k:"T",v:"boolean (inferred)"}]},
+    {g:[{k:"b",v:"boolean ✓"},{k:"arr",v:"number[] ✓",s:"mv-new"}],l:[],c:[{k:"T",v:"number[] (inferred)"}]},
+    {g:[{k:"x",v:"ERROR ✗",s:"mv-special"}],l:[],c:[{k:"T",v:"string explicit"},{k:"arg",v:"42: number ✗",s:"mv-special"}]},
+  ],
+},{
+  name:"Generic interface",
+  desc:"Interfaces can take type parameters too. <code>Box&lt;T&gt;</code> is a container whose <code>value</code> is of whatever type you specify. Each instantiation (<code>Box&lt;number&gt;</code>, <code>Box&lt;string&gt;</code>) creates a distinct concrete type.",
+  code:`<span class="kw">interface</span> Box&lt;<span id="gc0">T</span>&gt; { value: T }
+<span class="kw">const</span> <span id="gc1">nb</span>: Box&lt;<span class="kw">number</span>&gt; = { value: 42 };
+<span class="kw">const</span> <span id="gc2">sb</span>: Box&lt;<span class="kw">string</span>&gt; = { value: <span class="str">"hi"</span> };
+<span class="kw">const</span> <span id="gc3">bad</span>: Box&lt;<span class="kw">number</span>&gt; = { value: <span class="str">"x"</span> }; <span class="cm">// ✗</span>
+<span class="kw">function</span> unwrap&lt;<span id="gc4">T</span>&gt;(b: Box&lt;T&gt;): T { <span class="kw">return</span> b.value; }
+<span class="kw">const</span> <span id="gc5">v</span> = unwrap(nb); <span class="cm">// v: number</span>`,
+  steps:[
+    "interface Box<T> — generic interface; T filled in at usage",
+    "Box<number> — T=number; value must be a number",
+    "Box<string> — T=string; value must be a string",
+    "Box<number> = {value:'x'} — 'x' is string, expects number: ERROR ✗",
+    "unwrap<T>(b: Box<T>): T — generic function; returns whatever Box holds",
+    "unwrap(nb) — nb is Box<number>, T inferred as number; v: number ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"Box<T> interface",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Box<number> → nb",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"Box<string> → sb",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: Box<number> value",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"unwrap<T>",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"unwrap(nb): T=number",t:"f-cb"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"Box<T>: { value: T }"}],
+    [{t:"d-transform",i:"⇒",v:"Box<number>: { value: number }"},{t:"log-green",i:"✓",v:"nb: Box<number> ✓"}],
+    [{t:"d-transform",i:"⇒",v:"Box<string>: { value: string }"},{t:"log-green",i:"✓",v:"sb: Box<string> ✓"}],
+    [{t:"d-special",i:"!",v:"value:'x' is string, expects number"},{t:"log-red",i:"✗",v:"Type 'string' not assignable to 'number'"}],
+    [{t:"d-input",i:"→",v:"unwrap<T>(Box<T>)→T"}],
+    [{t:"d-transform",i:"⇒",v:"nb is Box<number>, T=number"},{t:"log-green",i:"✓",v:"v: number ✓"}],
+  ],
+  mem:[
+    {g:[{k:"Box<T>",v:"interface",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Box<T>",v:"interface"},{k:"nb",v:"Box<number> ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"nb",v:"Box<number> ✓"},{k:"sb",v:"Box<string> ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"sb",v:"Box<string> ✓"},{k:"bad",v:"Box<number> ✗",s:"mv-special"}],l:[],c:[{k:"value",v:"string ≠ number",s:"mv-special"}]},
+    {g:[{k:"unwrap",v:"<T>(Box<T>)→T",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"unwrap",v:"<T>(Box<T>)→T"},{k:"v",v:"number ✓",s:"mv-new"}],l:[],c:[{k:"T",v:"number (from nb)"}]},
+  ],
+},{
+  name:"Generic constraints with extends",
+  desc:"Use <code>T extends U</code> to require that T has at least the properties of U. This lets you safely access those properties inside the generic function.",
+  code:`<span class="kw">interface</span> <span id="gc0">HasName</span> { name: <span class="kw">string</span> }
+<span class="kw">function</span> greet&lt;<span id="gc1">T</span> <span class="kw">extends</span> HasName&gt;(item: T): <span class="kw">string</span> {
+  <span class="kw">return</span> <span id="gc2"><span class="str">"Hello, "</span> + item.name</span>;
+}
+greet(<span id="gc3">{ name: <span class="str">"Alice"</span> }</span>);
+greet(<span id="gc4">{ name: <span class="str">"Bob"</span>, age: 30 }</span>); <span class="cm">// ✓ extra ok</span>
+greet(<span id="gc5">{ age: 30 }</span>);           <span class="cm">// ✗ no name</span>`,
+  steps:[
+    "HasName — constraint interface: must have name: string",
+    "T extends HasName — T can be any type that has at least name: string",
+    "item.name — safe! constraint guarantees name exists on every T ✓",
+    "greet({name:'Alice'}) — satisfies HasName constraint ✓",
+    "greet({name:'Bob',age:30}) — extra age is fine; name present ✓",
+    "greet({age:30}) — no name property; fails HasName constraint ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"HasName constraint",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"greet<T extends HasName>",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"item.name — safe",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"T={name:string} ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"T={name,age} ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: T={age} — no name",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"HasName: { name: string }"}],
+    [{t:"d-transform",i:"⇒",v:"T must satisfy HasName"},{t:"log-purple",i:"i",v:"T can have more — but must have name"}],
+    [{t:"d-transform",i:"⇒",v:"item.name guaranteed by constraint"},{t:"log-green",i:"✓",v:"safe access ✓"}],
+    [{t:"d-transform",i:"⇒",v:"{name:'Alice'} satisfies HasName"},{t:"log-green",i:"✓",v:"greet() ✓"}],
+    [{t:"d-transform",i:"⇒",v:"{name,age} satisfies HasName"},{t:"log-green",i:"✓",v:"extra props allowed ✓"}],
+    [{t:"d-special",i:"!",v:"{age} has no name"},{t:"log-red",i:"✗",v:"Property 'name' is missing in type"}],
+  ],
+  mem:[
+    {g:[{k:"HasName",v:"{name:str}",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"HasName",v:"{name:str}"},{k:"greet",v:"<T extends HasName>",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"greet",v:"<T extends HasName>"}],l:[{k:"item.name",v:"string (guaranteed)",s:"mv-changed"}],c:[]},
+    {g:[{k:"greet",v:"<T extends HasName>"}],l:[{k:"T",v:"{name:'Alice'}",s:"mv-new"}],c:[{k:"check",v:"name ✓",s:"mv-changed"}]},
+    {g:[{k:"greet",v:"<T extends HasName>"}],l:[{k:"T",v:"{name,age}",s:"mv-new"}],c:[{k:"check",v:"name ✓ extra ok",s:"mv-changed"}]},
+    {g:[{k:"greet",v:"<T extends HasName>"}],l:[{k:"T",v:"{age} ✗",s:"mv-special"}],c:[{k:"error",v:"name missing",s:"mv-special"}]},
+  ],
+}]
+},
+{num:10,title:"Type Narrowing & Guards",tag:"typeof · instanceof · is · exhaustive",
+concept:"TypeScript tracks type information through control flow — called <strong>narrowing</strong>. Inside an <code>if</code> block after a type check, the compiler knows the more specific type. Use <code>typeof</code> for primitives, <code>instanceof</code> for class instances, and a <strong>user-defined type guard</strong> (return type <code>param is Type</code>) to teach TypeScript about custom checks. After narrowing all branches, the leftover type is often <code>never</code> — used for exhaustive checks.",
+callout:null,
+refs:[
+  {lbl:"typeof",cls:"",title:"Primitive narrowing",sub:"string|number|boolean|object"},
+  {lbl:"instanceof",cls:"",title:"Class narrowing",sub:"checks prototype chain"},
+  {lbl:"is",cls:"",title:"Custom guard",sub:"param is Type return type"},
+  {lbl:"never",cls:"",title:"Exhaustion check",sub:"unreachable after all branches"},
+],
+memPanelTitle:"Type environment",
+legend:[
+  {color:"var(--purple)",label:"Union type"},
+  {color:"var(--green)",label:"Narrowed ✓"},
+  {color:"var(--orange)",label:"Narrowing check"},
+  {color:"var(--red)",label:"Unreachable / error"},
+],
+examples:[{
+  name:"typeof narrowing with null and undefined",
+  desc:"Narrow a union that includes <code>null</code> and <code>undefined</code> by checking for each explicitly. After both checks the compiler knows the remaining type is the safe non-nullable value.",
+  code:`<span class="kw">function</span> process(<span id="gc0">val</span>: <span class="kw">string</span> | <span class="kw">null</span> | <span class="kw">undefined</span>) {
+  <span class="kw">if</span> (<span id="gc1">val === <span class="kw">null</span></span>) { <span class="kw">return</span> <span class="str">"null"</span>; }
+  <span class="kw">if</span> (<span id="gc2">val === <span class="kw">undefined</span></span>) { <span class="kw">return</span> <span class="str">"undef"</span>; }
+  <span class="kw">return</span> <span id="gc3">val.toUpperCase()</span>; <span class="cm">// val: string</span>
+}
+process(<span id="gc4"><span class="str">"hello"</span></span>);
+process(<span id="gc5"><span class="kw">null</span></span>);`,
+  steps:[
+    "val: string | null | undefined — three possible types",
+    "val === null — narrows null out; val: string | undefined after",
+    "val === undefined — narrows undefined out; val: string in next line",
+    "val.toUpperCase() — TS knows val: string here (both removed) ✓",
+    "process('hello') — string path → .toUpperCase() called",
+    "process(null) — null path → 'null' returned immediately",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"process: str|null|undef",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"null check",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"undefined check",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"val: string (safe)",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"call: process('hello')",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"call: process(null)",t:"f-active"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"val: string | null | undefined"}],
+    [{t:"d-transform",i:"⇒",v:"null eliminated"},{t:"log-orange",i:"!",v:"val: string | undefined after null check"}],
+    [{t:"d-transform",i:"⇒",v:"undefined eliminated"},{t:"log-orange",i:"!",v:"val: string — only type left"}],
+    [{t:"d-transform",i:"⇒",v:"val narrowed to: string"},{t:"log-green",i:"✓",v:".toUpperCase() safe ✓"}],
+    [{t:"d-input",i:"→",v:"'hello' → string path"},{t:"log-green",i:"✓",v:"→ 'HELLO'"}],
+    [{t:"d-input",i:"→",v:"null → null path"},{t:"log-green",i:"✓",v:"→ 'null'"}],
+  ],
+  mem:[
+    {g:[{k:"process",v:"(str|null|undef)",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"process",v:"(str|null|undef)"}],l:[{k:"val",v:"string|null|undef"},{k:"after",v:"string|undef",s:"mv-changed"}],c:[]},
+    {g:[{k:"process",v:"(str|null|undef)"}],l:[{k:"val",v:"string|undef"},{k:"after",v:"string",s:"mv-changed"}],c:[]},
+    {g:[{k:"process",v:"(str|null|undef)"}],l:[{k:"val",v:"string (safe) ✓",s:"mv-changed"}],c:[]},
+    {g:[{k:"process",v:"(str|null|undef)"}],l:[{k:"val",v:"'hello': string"}],c:[{k:"result",v:"'HELLO'",s:"mv-new"}]},
+    {g:[{k:"process",v:"(str|null|undef)"}],l:[{k:"val",v:"null"}],c:[{k:"result",v:"'null'",s:"mv-new"}]},
+  ],
+},{
+  name:"instanceof narrowing",
+  desc:"Use <code>instanceof</code> to narrow a union of class types. TypeScript checks the prototype chain at compile time and narrows accordingly in each branch.",
+  code:`<span class="kw">class</span> <span id="gc0">Dog</span> { bark() { <span class="kw">return</span> <span class="str">"woof"</span>; } }
+<span class="kw">class</span> <span id="gc1">Cat</span> { meow() { <span class="kw">return</span> <span class="str">"meow"</span>; } }
+<span class="kw">function</span> speak(pet: Dog | Cat) {
+  <span class="kw">if</span> (<span id="gc2">pet <span class="kw">instanceof</span> Dog</span>) {
+    <span class="kw">return</span> <span id="gc3">pet.bark()</span>; <span class="cm">// pet: Dog</span>
+  }
+  <span class="kw">return</span> <span id="gc4">pet.meow()</span>; <span class="cm">// pet: Cat</span>
+}
+speak(<span id="gc5"><span class="kw">new</span> Dog()</span>);`,
+  steps:[
+    "class Dog — TS creates both a type and a constructor",
+    "class Cat — another class type",
+    "pet instanceof Dog — checks prototype; narrows pet to Dog if true",
+    "pet.bark() — safe! TS knows pet: Dog in this branch ✓",
+    "pet.meow() — else: TS knows pet: Cat (Dog ruled out) ✓",
+    "speak(new Dog()) — instanceof Dog: true → bark() called",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"class Dog",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"class Cat",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"instanceof Dog check",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"pet: Dog branch",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"pet: Cat branch",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"call: speak(new Dog())",t:"f-active"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"Dog class registered"}],
+    [{t:"d-input",i:"→",v:"Cat class registered"}],
+    [{t:"d-transform",i:"⇒",v:"pet instanceof Dog"},{t:"log-orange",i:"!",v:"narrows union by prototype chain"}],
+    [{t:"d-transform",i:"⇒",v:"pet narrowed to: Dog"},{t:"log-green",i:"✓",v:".bark() available ✓"}],
+    [{t:"d-transform",i:"⇒",v:"pet narrowed to: Cat"},{t:"log-green",i:"✓",v:".meow() available ✓"}],
+    [{t:"d-input",i:"→",v:"new Dog() → instanceof Dog: true"},{t:"log-green",i:"✓",v:"→ 'woof'"}],
+  ],
+  mem:[
+    {g:[{k:"Dog",v:"class",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Dog",v:"class"},{k:"Cat",v:"class",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Dog",v:"class"},{k:"Cat",v:"class"}],l:[{k:"pet",v:"Dog | Cat"},{k:"check",v:"instanceof",s:"mv-new"}],c:[]},
+    {g:[{k:"Dog",v:"class"},{k:"Cat",v:"class"}],l:[{k:"pet",v:"Dog (narrowed)",s:"mv-changed"}],c:[]},
+    {g:[{k:"Dog",v:"class"},{k:"Cat",v:"class"}],l:[{k:"pet",v:"Cat (narrowed)",s:"mv-changed"}],c:[]},
+    {g:[{k:"Dog",v:"class"},{k:"Cat",v:"class"}],l:[{k:"pet",v:"Dog (runtime)"}],c:[{k:"result",v:"'woof'",s:"mv-new"}]},
+  ],
+},{
+  name:"User-defined type guard with is",
+  desc:"Create a function with return type <code>param is Type</code> to teach TypeScript how to narrow based on custom logic. When you call the guard in an <code>if</code>, TS trusts the result and narrows accordingly.",
+  code:`<span class="kw">interface</span> Fish { swim(): <span class="kw">void</span> }
+<span class="kw">interface</span> Bird { fly(): <span class="kw">void</span> }
+<span class="kw">function</span> <span id="gc0">isFish</span>(p: Fish | Bird): <span id="gc1">p <span class="kw">is</span> Fish</span> {
+  <span class="kw">return</span> <span id="gc2"><span class="str">"swim"</span> <span class="kw">in</span> p</span>;
+}
+<span class="kw">function</span> move(p: Fish | Bird) {
+  <span class="kw">if</span> (<span id="gc3">isFish(p)</span>) { <span id="gc4">p.swim()</span>; } <span class="cm">// p: Fish</span>
+  <span class="kw">else</span> { <span id="gc5">p.fly()</span>; }              <span class="cm">// p: Bird</span>
+}`,
+  steps:[
+    "isFish — user-defined type guard function",
+    "p is Fish — return type tells TS: if true, narrow p to Fish",
+    "'swim' in p — runtime check; true when p is a Fish",
+    "if (isFish(p)) — TS trusts the guard; narrows p to Fish ✓",
+    "p.swim() — safe! TS knows p: Fish in the true branch ✓",
+    "p.fly() — else branch: TS knows p: Bird ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"isFish type guard",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"return: p is Fish",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"'swim' in p",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"isFish(p) → narrows",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"p: Fish branch",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"p: Bird branch",t:"f-cb"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"isFish: (Fish|Bird) → p is Fish"}],
+    [{t:"d-transform",i:"⇒",v:"return type 'p is Fish' = type predicate"},{t:"log-purple",i:"i",v:"TS uses this annotation when narrowing"}],
+    [{t:"d-transform",i:"⇒",v:"'swim' in p → runtime property check"}],
+    [{t:"d-transform",i:"⇒",v:"if isFish(p) → p narrowed to Fish"},{t:"log-orange",i:"!",v:"TS trusts user-defined guard"}],
+    [{t:"d-transform",i:"⇒",v:"p: Fish"},{t:"log-green",i:"✓",v:".swim() safe ✓"}],
+    [{t:"d-transform",i:"⇒",v:"p: Bird"},{t:"log-green",i:"✓",v:".fly() safe ✓"}],
+  ],
+  mem:[
+    {g:[{k:"isFish",v:"(F|B)→p is Fish",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"isFish",v:"(F|B)→p is Fish"}],l:[],c:[{k:"predicate",v:"p is Fish",s:"mv-new"}]},
+    {g:[{k:"isFish",v:"(F|B)→p is Fish"}],l:[{k:"check",v:"'swim' in p",s:"mv-changed"}],c:[]},
+    {g:[{k:"isFish",v:"(F|B)→p is Fish"}],l:[{k:"p",v:"Fish | Bird"},{k:"guard",v:"applied",s:"mv-new"}],c:[]},
+    {g:[{k:"isFish",v:"(F|B)→p is Fish"}],l:[{k:"p",v:"Fish (narrowed)",s:"mv-changed"}],c:[]},
+    {g:[{k:"isFish",v:"(F|B)→p is Fish"}],l:[{k:"p",v:"Bird (narrowed)",s:"mv-changed"}],c:[]},
+  ],
+}]
+},
+{num:11,title:"Classes & Access Modifiers",tag:"public · private · protected · readonly · shorthand",
+concept:"TypeScript adds <strong>access modifiers</strong> to classes. <code>public</code> (the default) means accessible anywhere. <code>private</code> means accessible only inside the class itself. <code>protected</code> means accessible in the class and its subclasses. <code>readonly</code> means a property can only be set in the constructor. The <strong>constructor parameter shorthand</strong> lets you declare and assign a property in one line: <code>constructor(private name: string)</code>.",
+callout:null,
+refs:[
+  {lbl:"public",cls:"",title:"Accessible anywhere",sub:"the default modifier"},
+  {lbl:"private",cls:"",title:"Class-only access",sub:"not even subclasses"},
+  {lbl:"protected",cls:"",title:"Class + subclasses",sub:"hidden from outside"},
+  {lbl:"readonly",cls:"",title:"Constructor-only set",sub:"immutable after init"},
+],
+memPanelTitle:"Type environment",
+legend:[
+  {color:"var(--purple)",label:"Class type"},
+  {color:"var(--green)",label:"Accessible ✓"},
+  {color:"var(--red)",label:"Access denied ✗"},
+  {color:"var(--orange)",label:"Currently checking"},
+],
+examples:[{
+  name:"public, private, and protected",
+  desc:"<code>public</code> members are accessible everywhere. <code>private</code> members can only be used inside the class. <code>protected</code> members can be used in the class and its subclasses — but not from outside.",
+  code:`<span class="kw">class</span> <span id="gc0">Person</span> {
+  <span class="kw">public</span> <span id="gc1">name</span>: <span class="kw">string</span>;
+  <span class="kw">private</span> <span id="gc2">age</span>: <span class="kw">number</span>;
+  <span class="kw">protected</span> <span id="gc3">id</span>: <span class="kw">string</span>;
+  constructor(n: <span class="kw">string</span>, a: <span class="kw">number</span>) {
+    <span class="kw">this</span>.name = n; <span class="kw">this</span>.age = a; <span class="kw">this</span>.id = <span class="str">"p1"</span>;
+  }
+}
+<span class="kw">const</span> p = <span class="kw">new</span> Person(<span class="str">"Alice"</span>, 30);
+p.<span id="gc4">name</span>;  <span class="cm">// ✓ public</span>
+p.<span id="gc5">age</span>;   <span class="cm">// ✗ private</span>`,
+  steps:[
+    "class Person declared — has public, private, and protected members",
+    "name: public — accessible from anywhere outside the class",
+    "age: private — accessible only inside Person class body",
+    "id: protected — accessible in Person and any subclass",
+    "p.name — public: accessible outside the class ✓",
+    "p.age — private: cannot access from outside Person ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"class Person",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"public name",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"private age",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"protected id",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"p.name: public ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: p.age private",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"Person class registered"}],
+    [{t:"d-transform",i:"⇒",v:"name: public — no restriction"},{t:"log-green",i:"✓",v:"accessible anywhere ✓"}],
+    [{t:"d-special",i:"!",v:"age: private — class-only"},{t:"log-orange",i:"!",v:"not accessible outside Person"}],
+    [{t:"d-transform",i:"⇒",v:"id: protected — class + subclasses"},{t:"log-orange",i:"!",v:"not accessible outside class hierarchy"}],
+    [{t:"d-transform",i:"⇒",v:"p.name = public"},{t:"log-green",i:"✓",v:"access allowed ✓"}],
+    [{t:"d-special",i:"!",v:"p.age = private"},{t:"log-red",i:"✗",v:"Property 'age' is private and only accessible within class 'Person'"}],
+  ],
+  mem:[
+    {g:[{k:"Person",v:"class",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Person",v:"class"}],l:[{k:"name",v:"public: string",s:"mv-new"}],c:[]},
+    {g:[{k:"Person",v:"class"}],l:[{k:"name",v:"public"},{k:"age",v:"private: number",s:"mv-new"}],c:[]},
+    {g:[{k:"Person",v:"class"}],l:[{k:"name",v:"public"},{k:"age",v:"private"},{k:"id",v:"protected: str",s:"mv-new"}],c:[]},
+    {g:[{k:"p",v:"Person ✓",s:"mv-new"}],l:[],c:[{k:"p.name",v:"'Alice' ✓",s:"mv-changed"}]},
+    {g:[{k:"p",v:"Person"}],l:[],c:[{k:"p.age",v:"✗ private",s:"mv-special"}]},
+  ],
+},{
+  name:"readonly properties",
+  desc:"<code>readonly</code> properties can only be assigned inside the constructor. After the object is created, they cannot be changed. This is stronger than <code>const</code> — it applies to class instances.",
+  code:`<span class="kw">class</span> <span id="gc0">Point</span> {
+  <span class="kw">readonly</span> x: <span class="kw">number</span>;
+  <span class="kw">readonly</span> y: <span class="kw">number</span>;
+  constructor(x: <span class="kw">number</span>, y: <span class="kw">number</span>) {
+    <span id="gc1"><span class="kw">this</span>.x</span> = x; <span id="gc2"><span class="kw">this</span>.y</span> = y; <span class="cm">// ✓ in ctor</span>
+  }
+}
+<span class="kw">const</span> <span id="gc3">pt</span> = <span class="kw">new</span> Point(1, 2);
+<span id="gc4">pt.x</span> = 5;  <span class="cm">// ✗ readonly</span>
+<span id="gc5">pt.y</span> = 9;  <span class="cm">// ✗ readonly</span>`,
+  steps:[
+    "Point class — x and y are readonly: can only be set in the constructor",
+    "this.x = x — assigning readonly in constructor: valid ✓",
+    "this.y = y — assigning readonly in constructor: valid ✓",
+    "pt = new Point(1,2) — x=1, y=2 set once and frozen",
+    "pt.x = 5 — cannot reassign readonly property after construction ✗",
+    "pt.y = 9 — same: readonly enforced at compile time ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"class Point (readonly)",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"ctor: this.x = x ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ctor: this.y = y ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"pt = new Point(1,2)",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: pt.x = 5",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: pt.y = 9",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"x, y: readonly number"}],
+    [{t:"d-transform",i:"⇒",v:"constructor: this.x = x"},{t:"log-green",i:"✓",v:"readonly assignment in ctor allowed ✓"}],
+    [{t:"d-transform",i:"⇒",v:"constructor: this.y = y"},{t:"log-green",i:"✓",v:"readonly assignment in ctor allowed ✓"}],
+    [{t:"d-transform",i:"⇒",v:"pt created: x=1, y=2 (frozen)"}],
+    [{t:"d-special",i:"!",v:"pt.x = 5 after construction"},{t:"log-red",i:"✗",v:"Cannot assign to 'x' because it is a read-only property"}],
+    [{t:"d-special",i:"!",v:"pt.y = 9 after construction"},{t:"log-red",i:"✗",v:"Cannot assign to 'y' because it is a read-only property"}],
+  ],
+  mem:[
+    {g:[{k:"Point",v:"class (readonly)",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Point",v:"class"}],l:[{k:"this.x",v:"1 (set in ctor)",s:"mv-new"}],c:[]},
+    {g:[{k:"Point",v:"class"}],l:[{k:"this.x",v:"1"},{k:"this.y",v:"2 (set in ctor)",s:"mv-new"}],c:[]},
+    {g:[{k:"pt",v:"Point ✓",s:"mv-new"}],l:[],c:[{k:"pt.x",v:"1 (readonly)"},{k:"pt.y",v:"2 (readonly)"}]},
+    {g:[{k:"pt",v:"Point"}],l:[],c:[{k:"pt.x",v:"readonly ✗",s:"mv-special"}]},
+    {g:[{k:"pt",v:"Point"}],l:[],c:[{k:"pt.y",v:"readonly ✗",s:"mv-special"}]},
+  ],
+},{
+  name:"Constructor parameter shorthand",
+  desc:"Prefix a constructor parameter with an access modifier to declare, assign, and scope it all in one step. This eliminates repetitive <code>this.prop = prop</code> boilerplate.",
+  code:`<span class="kw">class</span> <span id="gc0">User</span> {
+  constructor(
+    <span class="kw">public</span>   <span id="gc1">name</span>: <span class="kw">string</span>,
+    <span class="kw">private</span>  <span id="gc2">email</span>: <span class="kw">string</span>,
+    <span class="kw">readonly</span> <span id="gc3">id</span>: <span class="kw">number</span>,
+  ) {}
+}
+<span class="kw">const</span> <span id="gc4">u</span> = <span class="kw">new</span> User(<span class="str">"Alice"</span>, <span class="str">"a@b.com"</span>, 1);
+u.<span id="gc5">email</span>; <span class="cm">// ✗ private</span>`,
+  steps:[
+    "class User — no body needed: shorthand handles everything",
+    "public name — declares this.name, assigns arg, makes it public ✓",
+    "private email — declares this.email, assigns arg, makes it private",
+    "readonly id — declares this.id, assigns arg, makes it readonly",
+    "new User('Alice','a@b.com',1) — all three props created and assigned ✓",
+    "u.email — private: only accessible inside User class ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"class User shorthand",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"public name param",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"private email param",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"readonly id param",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"u = new User(...)",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: u.email private",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"shorthand = declare + assign in ctor param"},{t:"log-purple",i:"i",v:"no 'this.name = name' boilerplate needed"}],
+    [{t:"d-transform",i:"⇒",v:"public name → this.name: string"},{t:"log-green",i:"✓",v:"accessible anywhere ✓"}],
+    [{t:"d-transform",i:"⇒",v:"private email → this.email: string"},{t:"log-orange",i:"!",v:"accessible inside User only"}],
+    [{t:"d-transform",i:"⇒",v:"readonly id → this.id: number"},{t:"log-orange",i:"!",v:"set once, never changed"}],
+    [{t:"d-transform",i:"⇒",v:"new User — all props declared and set ✓"}],
+    [{t:"d-special",i:"!",v:"u.email is private"},{t:"log-red",i:"✗",v:"Property 'email' is private"}],
+  ],
+  mem:[
+    {g:[{k:"User",v:"class (shorthand)",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"User",v:"class"}],l:[{k:"name",v:"public: string",s:"mv-new"}],c:[]},
+    {g:[{k:"User",v:"class"}],l:[{k:"name",v:"public"},{k:"email",v:"private: string",s:"mv-new"}],c:[]},
+    {g:[{k:"User",v:"class"}],l:[{k:"name",v:"public"},{k:"email",v:"private"},{k:"id",v:"readonly: num",s:"mv-new"}],c:[]},
+    {g:[{k:"u",v:"User ✓",s:"mv-new"}],l:[],c:[{k:"u.name",v:"'Alice' ✓"},{k:"u.id",v:"1 ✓"}]},
+    {g:[{k:"u",v:"User"}],l:[],c:[{k:"u.email",v:"✗ private",s:"mv-special"}]},
+  ],
+}]
+},
+{num:12,title:"Abstract Classes",tag:"abstract · extends · implements · polymorphism",
+concept:"An <strong>abstract class</strong> is a template that cannot be instantiated directly. It can define <em>abstract methods</em> — methods with no implementation body that every subclass must provide. Concrete methods in the abstract class can call abstract methods, enabling polymorphism. Use <code>extends</code> to subclass it; use <code>implements</code> to satisfy an interface contract.",
+callout:null,
+refs:[
+  {lbl:"abstract",cls:"",title:"No direct instantiation",sub:"must be subclassed"},
+  {lbl:"abstract method",cls:"",title:"No body in base",sub:"subclass must implement"},
+  {lbl:"extends",cls:"",title:"Inherit + implement",sub:"must provide all abstract methods"},
+  {lbl:"implements",cls:"",title:"Interface contract",sub:"class satisfies interface shape"},
+],
+memPanelTitle:"Type environment",
+legend:[
+  {color:"var(--purple)",label:"Abstract type"},
+  {color:"var(--green)",label:"Implemented ✓"},
+  {color:"var(--red)",label:"Cannot instantiate ✗"},
+  {color:"var(--orange)",label:"Polymorphic call"},
+],
+examples:[{
+  name:"Abstract class with abstract method",
+  desc:"Define an abstract method in the base class — no body, just a signature. Each subclass must implement it. The base class can have concrete methods that call the abstract one.",
+  code:`<span class="kw">abstract class</span> <span id="gc0">Shape</span> {
+  <span class="kw">abstract</span> <span id="gc1">area</span>(): <span class="kw">number</span>;
+  <span id="gc2">describe</span>() { <span class="kw">return</span> <span class="str">"area: "</span> + <span class="kw">this</span>.area(); }
+}
+<span class="kw">class</span> <span id="gc3">Circle</span> <span class="kw">extends</span> Shape {
+  constructor(<span class="kw">private</span> r: <span class="kw">number</span>) { <span class="kw">super</span>(); }
+  area() { <span class="kw">return</span> Math.PI * <span class="kw">this</span>.r * <span class="kw">this</span>.r; }
+}
+<span class="kw">const</span> <span id="gc4">c</span> = <span class="kw">new</span> Circle(5);
+<span class="kw">new</span> <span id="gc5">Shape</span>(); <span class="cm">// ✗ abstract</span>`,
+  steps:[
+    "abstract class Shape — cannot be instantiated; must be subclassed",
+    "abstract area(): number — no body; every subclass must implement this",
+    "describe() — concrete method; calls this.area() polymorphically",
+    "Circle extends Shape — must implement area() to be concrete ✓",
+    "new Circle(5) — Circle is concrete, can be instantiated ✓",
+    "new Shape() — ERROR: cannot create instance of abstract class ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"abstract Shape",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"abstract area()",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"concrete describe()",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"Circle extends Shape",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"new Circle(5) ✓",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: new Shape()",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"Shape: abstract — no direct new"},{t:"log-orange",i:"!",v:"abstract classes are templates only"}],
+    [{t:"d-input",i:"→",v:"abstract area() — signature only, no body"},{t:"log-purple",i:"i",v:"subclasses must provide implementation"}],
+    [{t:"d-transform",i:"⇒",v:"describe() calls this.area()"},{t:"log-purple",i:"i",v:"polymorphic: resolved at runtime"}],
+    [{t:"d-transform",i:"⇒",v:"Circle provides area() ✓"},{t:"log-green",i:"✓",v:"Circle is a concrete class ✓"}],
+    [{t:"d-transform",i:"⇒",v:"new Circle(5) ok"},{t:"log-green",i:"✓",v:"concrete subclass can be instantiated ✓"}],
+    [{t:"d-special",i:"!",v:"Shape is abstract"},{t:"log-red",i:"✗",v:"Cannot create an instance of an abstract class"}],
+  ],
+  mem:[
+    {g:[{k:"Shape",v:"abstract class",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Shape",v:"abstract class"}],l:[{k:"area()",v:"abstract — no body",s:"mv-new"}],c:[]},
+    {g:[{k:"Shape",v:"abstract class"}],l:[{k:"describe()",v:"concrete — calls area()",s:"mv-new"}],c:[]},
+    {g:[{k:"Shape",v:"abstract"},{k:"Circle",v:"extends Shape ✓",s:"mv-new"}],l:[{k:"area()",v:"implemented ✓",s:"mv-changed"}],c:[]},
+    {g:[{k:"c",v:"Circle ✓",s:"mv-new"}],l:[],c:[{k:"c.area()",v:"→ Math.PI*25"}]},
+    {g:[{k:"Shape",v:"abstract"}],l:[],c:[{k:"new Shape()",v:"✗ abstract",s:"mv-special"}]},
+  ],
+},{
+  name:"Polymorphism with multiple subclasses",
+  desc:"Multiple subclasses can extend the same abstract class, each providing their own implementation. Storing them in an array typed as the abstract base class gives you polymorphic dispatch.",
+  code:`<span class="kw">abstract class</span> <span id="gc0">Animal</span> {
+  <span class="kw">abstract</span> sound(): <span class="kw">string</span>;
+}
+<span class="kw">class</span> <span id="gc1">Dog</span> <span class="kw">extends</span> Animal {
+  sound() { <span class="kw">return</span> <span class="str">"woof"</span>; }
+}
+<span class="kw">class</span> <span id="gc2">Cat</span> <span class="kw">extends</span> Animal {
+  sound() { <span class="kw">return</span> <span class="str">"meow"</span>; }
+}
+<span class="kw">const</span> <span id="gc3">pets</span>: Animal[] = [<span class="kw">new</span> Dog(), <span class="kw">new</span> Cat()];
+<span id="gc4">pets</span>.forEach(<span id="gc5">a</span> => a.sound());`,
+  steps:[
+    "abstract Animal — defines abstract sound(); cannot be instantiated",
+    "Dog extends Animal — provides sound() = 'woof' ✓",
+    "Cat extends Animal — provides sound() = 'meow' ✓",
+    "pets: Animal[] — array typed as abstract base; holds Dog and Cat ✓",
+    "pets.forEach — iterating over Animal base type",
+    "a.sound() — polymorphic: Dog calls 'woof', Cat calls 'meow' ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"abstract Animal",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Dog extends Animal",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"Cat extends Animal",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"pets: Animal[]",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"forEach(a: Animal)",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"a.sound() — polymorphic",t:"f-active"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"Animal: abstract sound()"}],
+    [{t:"d-transform",i:"⇒",v:"Dog: sound()='woof'"},{t:"log-green",i:"✓",v:"Dog is concrete ✓"}],
+    [{t:"d-transform",i:"⇒",v:"Cat: sound()='meow'"},{t:"log-green",i:"✓",v:"Cat is concrete ✓"}],
+    [{t:"d-transform",i:"⇒",v:"[Dog, Cat] assignable to Animal[]"},{t:"log-green",i:"✓",v:"subclasses assignable to base type ✓"}],
+    [{t:"d-input",i:"→",v:"a: Animal — iterating"},{t:"log-orange",i:"!",v:"each element resolved to concrete class at runtime"}],
+    [{t:"d-transform",i:"⇒",v:"Dog.sound()='woof', Cat.sound()='meow'"},{t:"log-green",i:"✓",v:"polymorphic dispatch ✓"}],
+  ],
+  mem:[
+    {g:[{k:"Animal",v:"abstract class",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Animal",v:"abstract"},{k:"Dog",v:"extends Animal",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Dog",v:"extends Animal"},{k:"Cat",v:"extends Animal",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"pets",v:"Animal[Dog,Cat]",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"pets",v:"Animal[Dog,Cat]"}],l:[{k:"a",v:"Animal (loop var)"}],c:[]},
+    {g:[{k:"pets",v:"Animal[Dog,Cat]"}],l:[{k:"a.sound()",v:"'woof'/'meow'",s:"mv-changed"}],c:[]},
+  ],
+},{
+  name:"Abstract class implementing an interface",
+  desc:"An abstract class can <code>implement</code> an interface, declaring the interface methods as abstract. Concrete subclasses then fulfill both the abstract class and the interface contracts.",
+  code:`<span class="kw">interface</span> <span id="gc0">Drawable</span> { draw(): <span class="kw">void</span> }
+<span class="kw">abstract class</span> <span id="gc1">UIElement</span> <span class="kw">implements</span> Drawable {
+  <span class="kw">abstract</span> draw(): <span class="kw">void</span>;
+  resize(n: <span class="kw">number</span>) { <span class="cm">/* shared impl */</span> }
+}
+<span class="kw">class</span> <span id="gc2">Button</span> <span class="kw">extends</span> UIElement {
+  <span id="gc3">draw</span>() { console.log(<span class="str">"drawing button"</span>); }
+}
+<span class="kw">const</span> <span id="gc4">btn</span> = <span class="kw">new</span> Button();
+<span id="gc5">btn</span>.draw(); btn.resize(2);`,
+  steps:[
+    "Drawable interface — requires draw(): void",
+    "UIElement implements Drawable — abstract class satisfies the interface shape",
+    "Button extends UIElement — concrete class; must implement draw() ✓",
+    "draw() in Button — provides the concrete implementation ✓",
+    "btn = new Button() — concrete subclass, can be instantiated ✓",
+    "btn.draw() and btn.resize() — both methods accessible ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"Drawable interface",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"UIElement implements Drawable",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Button extends UIElement",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"draw() implemented",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"btn = new Button()",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"btn.draw(), btn.resize()",t:"f-cb"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"Drawable: { draw(): void }"}],
+    [{t:"d-transform",i:"⇒",v:"UIElement: abstract draw() + concrete resize()"},{t:"log-purple",i:"i",v:"abstract class can be partial implementation"}],
+    [{t:"d-transform",i:"⇒",v:"Button: provides draw()"},{t:"log-green",i:"✓",v:"satisfies UIElement + Drawable ✓"}],
+    [{t:"d-transform",i:"⇒",v:"draw() body provided"},{t:"log-green",i:"✓",v:"Button is now concrete ✓"}],
+    [{t:"d-transform",i:"⇒",v:"new Button() ok"},{t:"log-green",i:"✓",v:"concrete subclass instantiable ✓"}],
+    [{t:"d-transform",i:"⇒",v:"draw() and resize() both available"},{t:"log-green",i:"✓",v:"full interface + abstract class satisfied ✓"}],
+  ],
+  mem:[
+    {g:[{k:"Drawable",v:"interface",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Drawable",v:"interface"},{k:"UIElement",v:"abstract+implements",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"UIElement",v:"abstract"},{k:"Button",v:"extends UIElement",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"Button",v:"extends UIElement"}],l:[{k:"draw()",v:"implemented ✓",s:"mv-changed"}],c:[]},
+    {g:[{k:"btn",v:"Button ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"btn",v:"Button ✓"}],l:[],c:[{k:"draw()",v:"✓"},{k:"resize()",v:"✓ (inherited)",s:"mv-new"}]},
+  ],
+}]
+},
+{num:13,title:"Function Overloads",tag:"multiple signatures · implementation · method overloads",
+concept:"<strong>Function overloads</strong> let you declare multiple valid calling signatures for one function. You write the overload signatures first (no body), then a single <em>implementation signature</em> that handles all cases. TypeScript checks call sites against the overload signatures — not the implementation — so the implementation can be more permissive internally.",
+callout:null,
+refs:[
+  {lbl:"signature",cls:"",title:"Overload declaration",sub:"no body — defines valid call patterns"},
+  {lbl:"implementation",cls:"",title:"Single handler",sub:"more general, not callable directly"},
+  {lbl:"checking",cls:"",title:"Callers see overloads",sub:"implementation sig is invisible to callers"},
+],
+memPanelTitle:"Type environment",
+legend:[
+  {color:"var(--purple)",label:"Overload signature"},
+  {color:"var(--green)",label:"Matches overload ✓"},
+  {color:"var(--red)",label:"No matching overload ✗"},
+  {color:"var(--orange)",label:"Implementation"},
+],
+examples:[{
+  name:"Basic function overloads",
+  desc:"Declare multiple overload signatures above the implementation. TypeScript uses the overload signatures to check calls — the implementation signature handles all cases but is not visible to callers.",
+  code:`<span class="kw">function</span> <span id="gc0">fmt</span>(val: <span class="kw">string</span>): <span class="kw">string</span>;
+<span class="kw">function</span> <span id="gc1">fmt</span>(val: <span class="kw">number</span>): <span class="kw">string</span>;
+<span class="kw">function</span> <span id="gc2">fmt</span>(val: <span class="kw">string</span> | <span class="kw">number</span>): <span class="kw">string</span> {
+  <span class="kw">return</span> String(val);
+}
+<span id="gc3">fmt(<span class="str">"hello"</span>)</span>; <span class="cm">// ✓ matches sig 1</span>
+<span id="gc4">fmt(42)</span>;       <span class="cm">// ✓ matches sig 2</span>
+<span id="gc5">fmt(<span class="kw">true</span>)</span>;     <span class="cm">// ✗ no matching overload</span>`,
+  steps:[
+    "overload 1: fmt(string) → string — valid calling pattern",
+    "overload 2: fmt(number) → string — another valid pattern",
+    "implementation: fmt(string|number) — handles all overloads internally",
+    "fmt('hello') — matches overload 1 (string): valid ✓",
+    "fmt(42) — matches overload 2 (number): valid ✓",
+    "fmt(true) — boolean matches no overload: ERROR ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"overload 1: (string)→str",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"overload 2: (number)→str",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"implementation",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"fmt('hello'): sig 1 ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"fmt(42): sig 2 ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: fmt(true)",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"overload 1: (string)→string"}],
+    [{t:"d-input",i:"→",v:"overload 2: (number)→string"}],
+    [{t:"d-input",i:"→",v:"impl: (string|number)→string"},{t:"log-orange",i:"!",v:"callers cannot call the impl sig directly"}],
+    [{t:"d-transform",i:"⇒",v:"'hello' matches overload 1"},{t:"log-green",i:"✓",v:"valid call ✓"}],
+    [{t:"d-transform",i:"⇒",v:"42 matches overload 2"},{t:"log-green",i:"✓",v:"valid call ✓"}],
+    [{t:"d-special",i:"!",v:"true is boolean — no overload accepts boolean"},{t:"log-red",i:"✗",v:"No overload matches this call"}],
+  ],
+  mem:[
+    {g:[{k:"fmt",v:"overload 1: str→str",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"fmt",v:"overloads 1+2",s:"mv-changed"}],l:[],c:[]},
+    {g:[{k:"fmt",v:"overloads 1+2 + impl"}],l:[],c:[{k:"impl",v:"str|num→str (internal)",s:"mv-new"}]},
+    {g:[{k:"fmt",v:"overloads 1+2"}],l:[{k:"call",v:"'hello' → sig 1 ✓",s:"mv-new"}],c:[]},
+    {g:[{k:"fmt",v:"overloads 1+2"}],l:[{k:"call",v:"42 → sig 2 ✓",s:"mv-new"}],c:[]},
+    {g:[{k:"fmt",v:"overloads 1+2"}],l:[{k:"call",v:"true → ✗ no match",s:"mv-special"}],c:[]},
+  ],
+},{
+  name:"Overloads with different return types",
+  desc:"Overloads can have different return types per signature. The return type at a call site is inferred from the matching overload — giving you precise types without union return types.",
+  code:`<span class="kw">function</span> <span id="gc0">parse</span>(input: <span class="kw">string</span>): <span class="kw">number</span>;
+<span class="kw">function</span> <span id="gc1">parse</span>(input: <span class="kw">number</span>): <span class="kw">string</span>;
+<span class="kw">function</span> <span id="gc2">parse</span>(input: <span class="kw">string</span> | <span class="kw">number</span>): <span class="kw">string</span> | <span class="kw">number</span> {
+  <span class="kw">if</span> (<span id="gc3"><span class="kw">typeof</span> input === <span class="str">"string"</span></span>) <span class="kw">return</span> parseInt(input);
+  <span class="kw">return</span> String(input);
+}
+<span class="kw">const</span> <span id="gc4">n</span> = parse(<span class="str">"42"</span>); <span class="cm">// n: number</span>
+<span class="kw">const</span> <span id="gc5">s</span> = parse(42);   <span class="cm">// s: string</span>`,
+  steps:[
+    "overload 1: parse(string) → number — string input gives number",
+    "overload 2: parse(number) → string — number input gives string",
+    "implementation: handles both; return type is broader union",
+    "typeof check — narrows inside implementation body",
+    "n = parse('42') — matches overload 1; n: number (not number|string) ✓",
+    "s = parse(42) — matches overload 2; s: string (not number|string) ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"overload 1: str→num",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"overload 2: num→str",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"implementation",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"typeof check (impl body)",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"n = parse('42'): number",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"s = parse(42): string",t:"f-cb"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"overload 1: (string)→number"}],
+    [{t:"d-input",i:"→",v:"overload 2: (number)→string"}],
+    [{t:"d-input",i:"→",v:"impl: broader union internally"},{t:"log-orange",i:"!",v:"impl return type can be wider than overloads"}],
+    [{t:"d-transform",i:"⇒",v:"typeof narrows inside impl body"}],
+    [{t:"d-transform",i:"⇒",v:"parse('42') → sig 1 → number"},{t:"log-green",i:"✓",v:"n: number (precise) ✓"}],
+    [{t:"d-transform",i:"⇒",v:"parse(42) → sig 2 → string"},{t:"log-green",i:"✓",v:"s: string (precise) ✓"}],
+  ],
+  mem:[
+    {g:[{k:"parse",v:"sig1: str→num",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"parse",v:"sig1+sig2",s:"mv-changed"}],l:[],c:[]},
+    {g:[{k:"parse",v:"sig1+sig2+impl"}],l:[],c:[]},
+    {g:[{k:"parse",v:"sig1+sig2"}],l:[{k:"typeof",v:"narrowing input"}],c:[]},
+    {g:[{k:"parse",v:"sig1+sig2"},{k:"n",v:"number ✓",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"parse",v:"sig1+sig2"},{k:"s",v:"string ✓",s:"mv-new"}],l:[],c:[]},
+  ],
+},{
+  name:"Method overloads in a class",
+  desc:"Class methods can be overloaded the same way as standalone functions — declare overload signatures above the implementation inside the class body.",
+  code:`<span class="kw">class</span> Logger {
+  <span id="gc0">log</span>(msg: <span class="kw">string</span>): <span class="kw">void</span>;
+  <span id="gc1">log</span>(msg: <span class="kw">string</span>, level: <span class="kw">number</span>): <span class="kw">void</span>;
+  <span id="gc2">log</span>(msg: <span class="kw">string</span>, level?: <span class="kw">number</span>): <span class="kw">void</span> {
+    console.log(level ? <span class="str">\`[\${level}] \${msg}\`</span> : msg);
+  }
+}
+<span class="kw">const</span> l = <span class="kw">new</span> Logger();
+l.<span id="gc3">log</span>(<span class="str">"hello"</span>);        <span class="cm">// ✓ sig 1</span>
+l.<span id="gc4">log</span>(<span class="str">"err"</span>, 1);     <span class="cm">// ✓ sig 2</span>
+l.<span id="gc5">log</span>(<span class="str">"x"</span>, <span class="str">"y"</span>);     <span class="cm">// ✗ no match</span>`,
+  steps:[
+    "overload 1: log(string) → void — just a message",
+    "overload 2: log(string, number) → void — message with level",
+    "implementation: optional level internally",
+    "l.log('hello') — matches overload 1: valid ✓",
+    "l.log('err', 1) — matches overload 2: valid ✓",
+    "l.log('x','y') — second arg is string, no overload matches: ERROR ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"Logger.log sig 1",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Logger.log sig 2",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Logger.log impl",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"l.log('hello') sig 1 ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"l.log('err',1) sig 2 ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: l.log('x','y')",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"log sig 1: (string)→void"}],
+    [{t:"d-input",i:"→",v:"log sig 2: (string,number)→void"}],
+    [{t:"d-input",i:"→",v:"impl: (string, number?)→void"},{t:"log-orange",i:"!",v:"impl handles both overloads"}],
+    [{t:"d-transform",i:"⇒",v:"log('hello') matches sig 1"},{t:"log-green",i:"✓",v:"valid ✓"}],
+    [{t:"d-transform",i:"⇒",v:"log('err',1) matches sig 2"},{t:"log-green",i:"✓",v:"valid ✓"}],
+    [{t:"d-special",i:"!",v:"('x','y') — 'y' is string, sig 2 needs number"},{t:"log-red",i:"✗",v:"No overload matches this call"}],
+  ],
+  mem:[
+    {g:[{k:"Logger",v:"class",s:"mv-new"}],l:[{k:"log",v:"sig1: (str)→void",s:"mv-new"}],c:[]},
+    {g:[{k:"Logger",v:"class"}],l:[{k:"log",v:"sig1+sig2",s:"mv-changed"}],c:[]},
+    {g:[{k:"Logger",v:"class"}],l:[{k:"log",v:"sig1+sig2+impl"}],c:[]},
+    {g:[{k:"l",v:"Logger ✓",s:"mv-new"}],l:[{k:"call",v:"log('hello') ✓",s:"mv-new"}],c:[]},
+    {g:[{k:"l",v:"Logger ✓"}],l:[{k:"call",v:"log('err',1) ✓",s:"mv-new"}],c:[]},
+    {g:[{k:"l",v:"Logger ✓"}],l:[{k:"call",v:"log('x','y') ✗",s:"mv-special"}],c:[]},
+  ],
+}]
+},
+{num:14,title:"Optional & Default Parameters",tag:"param? · param=default · optional chaining ?.",
+concept:"Mark a function parameter <strong>optional</strong> with <code>?</code> — its type becomes <code>T | undefined</code> and it can be omitted at the call site. <strong>Default parameters</strong> use <code>= value</code>: if the argument is omitted or <code>undefined</code>, the default is used and TypeScript infers the parameter type from it. <strong>Optional chaining</strong> (<code>?.</code>) safely accesses nested properties that might be <code>undefined</code>, short-circuiting to <code>undefined</code> instead of throwing.",
+callout:null,
+refs:[
+  {lbl:"?",cls:"",title:"Optional parameter",sub:"T | undefined, can be omitted"},
+  {lbl:"= val",cls:"",title:"Default parameter",sub:"used when arg is omitted/undefined"},
+  {lbl:"?.",cls:"",title:"Optional chaining",sub:"short-circuits to undefined safely"},
+],
+memPanelTitle:"Type environment",
+legend:[
+  {color:"var(--purple)",label:"Optional type"},
+  {color:"var(--green)",label:"Valid call ✓"},
+  {color:"var(--red)",label:"Type mismatch ✗"},
+  {color:"var(--orange)",label:"Default applied"},
+],
+examples:[{
+  name:"Optional parameters with ?",
+  desc:"Add <code>?</code> after a parameter name to make it optional. Inside the function the type is <code>T | undefined</code> — you must check before using it.",
+  code:`<span class="kw">function</span> greet(<span id="gc0">name</span>: <span class="kw">string</span>, <span id="gc1">title?</span>: <span class="kw">string</span>): <span class="kw">string</span> {
+  <span class="kw">return</span> <span id="gc2">title</span> ? <span class="str">\`\${title} \${name}\`</span> : name;
+}
+greet(<span id="gc3"><span class="str">"Alice"</span></span>);          <span class="cm">// ✓ "Alice"</span>
+greet(<span id="gc4"><span class="str">"Alice"</span>, <span class="str">"Dr."</span></span>);  <span class="cm">// ✓ "Dr. Alice"</span>
+greet(<span id="gc5"><span class="str">"Alice"</span>, 42</span>);     <span class="cm">// ✗ number ≠ string</span>`,
+  steps:[
+    "name: string — required; must always be provided",
+    "title?: string — optional; type is string | undefined",
+    "title ? ... — must check because title could be undefined",
+    "greet('Alice') — title omitted; title=undefined; returns 'Alice' ✓",
+    "greet('Alice','Dr.') — both provided; returns 'Dr. Alice' ✓",
+    "greet('Alice', 42) — 42 is number, title expects string: ERROR ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"greet(name, title?)",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"title?: str|undefined",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"title check",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"greet('Alice') ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"greet('Alice','Dr.') ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: greet('Alice',42)",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"name: string — required"}],
+    [{t:"d-input",i:"→",v:"title?: string — optional"},{t:"log-purple",i:"i",v:"inside fn: title is string | undefined"}],
+    [{t:"d-transform",i:"⇒",v:"title truthy check — needed because title?: undefined"}],
+    [{t:"d-transform",i:"⇒",v:"title=undefined; returns name"},{t:"log-green",i:"✓",v:"'Alice' ✓"}],
+    [{t:"d-transform",i:"⇒",v:"title='Dr.'; returns 'Dr. Alice'"},{t:"log-green",i:"✓",v:"'Dr. Alice' ✓"}],
+    [{t:"d-special",i:"!",v:"42: number, title?: string"},{t:"log-red",i:"✗",v:"Argument 'number' not assignable to 'string'"}],
+  ],
+  mem:[
+    {g:[{k:"greet",v:"(str, str?)→str",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"greet",v:"(str, str?)→str"}],l:[{k:"title",v:"string | undefined",s:"mv-new"}],c:[]},
+    {g:[{k:"greet",v:"(str, str?)→str"}],l:[{k:"title",v:"str|undef — checked"}],c:[]},
+    {g:[{k:"greet",v:"(str, str?)→str"}],l:[{k:"name",v:"'Alice'"},{k:"title",v:"undefined"}],c:[{k:"result",v:"'Alice'",s:"mv-new"}]},
+    {g:[{k:"greet",v:"(str, str?)→str"}],l:[{k:"name",v:"'Alice'"},{k:"title",v:"'Dr.'"}],c:[{k:"result",v:"'Dr. Alice'",s:"mv-new"}]},
+    {g:[{k:"greet",v:"(str, str?)→str"}],l:[{k:"title",v:"42: number ✗",s:"mv-special"}],c:[]},
+  ],
+},{
+  name:"Default parameter values",
+  desc:"Default parameters use <code>= value</code>. TypeScript infers the parameter type from the default. If the argument is omitted or <code>undefined</code>, the default is substituted.",
+  code:`<span class="kw">function</span> repeat(str: <span class="kw">string</span>, <span id="gc0">times</span> = 3): <span class="kw">string</span> {
+  <span class="kw">return</span> str.repeat(times);
+}
+repeat(<span id="gc1"><span class="str">"ha"</span></span>);       <span class="cm">// "hahaha" (times=3)</span>
+repeat(<span id="gc2"><span class="str">"ha"</span>, 2</span>);    <span class="cm">// "haha"</span>
+<span class="kw">function</span> mul(x: <span class="kw">number</span>, <span id="gc3">y</span> = 2): <span class="kw">number</span> {
+  <span class="kw">return</span> x * y;
+}
+mul(<span id="gc4">5</span>);       <span class="cm">// 10 (y=2)</span>
+mul(<span id="gc5">5, 3</span>);    <span class="cm">// 15</span>`,
+  steps:[
+    "times = 3 — default: if omitted or undefined, times = 3; type inferred: number",
+    "repeat('ha') — times omitted → uses default 3; 'ha'.repeat(3) = 'hahaha' ✓",
+    "repeat('ha', 2) — times = 2 override; 'ha'.repeat(2) = 'haha' ✓",
+    "y = 2 — default: y inferred as number; if omitted → y = 2",
+    "mul(5) — y omitted → y=2; 5*2 = 10 ✓",
+    "mul(5, 3) — y=3 override; 5*3 = 15 ✓",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"repeat(str, times=3)",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"repeat('ha'): default",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"repeat('ha',2): override",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"mul(x, y=2)",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"mul(5): default y=2",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"mul(5,3): y=3",t:"f-active"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"times = 3 — default value"},{t:"log-purple",i:"i",v:"TS infers times: number from default 3"}],
+    [{t:"d-transform",i:"⇒",v:"times omitted → 3 applied"},{t:"log-orange",i:"!",v:"default substituted → 'hahaha'"}],
+    [{t:"d-transform",i:"⇒",v:"times=2 override"},{t:"log-green",i:"✓",v:"→ 'haha'"}],
+    [{t:"d-input",i:"→",v:"y = 2 — default"},{t:"log-purple",i:"i",v:"TS infers y: number from default 2"}],
+    [{t:"d-transform",i:"⇒",v:"y omitted → 2 applied"},{t:"log-orange",i:"!",v:"5*2 = 10"}],
+    [{t:"d-transform",i:"⇒",v:"y=3 override"},{t:"log-green",i:"✓",v:"5*3 = 15"}],
+  ],
+  mem:[
+    {g:[{k:"repeat",v:"(str,n=3)→str",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"repeat",v:"(str,n=3)→str"}],l:[{k:"times",v:"3 (default)",s:"mv-new"}],c:[{k:"result",v:"'hahaha'"}]},
+    {g:[{k:"repeat",v:"(str,n=3)→str"}],l:[{k:"times",v:"2 (override)",s:"mv-changed"}],c:[{k:"result",v:"'haha'"}]},
+    {g:[{k:"repeat",v:"(str,n=3)→str"},{k:"mul",v:"(n,y=2)→n",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"mul",v:"(n,y=2)→n"}],l:[{k:"y",v:"2 (default)",s:"mv-new"}],c:[{k:"result",v:"10"}]},
+    {g:[{k:"mul",v:"(n,y=2)→n"}],l:[{k:"y",v:"3 (override)",s:"mv-changed"}],c:[{k:"result",v:"15"}]},
+  ],
+},{
+  name:"Optional chaining ?. with TypeScript",
+  desc:"<code>?.</code> short-circuits to <code>undefined</code> instead of throwing if the left side is <code>null</code> or <code>undefined</code>. TypeScript types the result as <code>T | undefined</code> and requires you to handle that.",
+  code:`<span class="kw">interface</span> User {
+  name: <span class="kw">string</span>;
+  <span id="gc0">address?</span>: { city: <span class="kw">string</span> };
+}
+<span class="kw">const</span> <span id="gc1">u</span>: User = { name: <span class="str">"Alice"</span> };
+<span class="kw">const</span> <span id="gc2">city</span> = u.address<span class="kw">?.</span>city; <span class="cm">// string | undefined</span>
+<span id="gc3">city</span><span class="kw">?.</span>toUpperCase();          <span class="cm">// ✓ chained</span>
+<span id="gc4">city</span>.toUpperCase();           <span class="cm">// ✗ possibly undef</span>
+<span id="gc5">u.address</span>.city;               <span class="cm">// ✗ possibly undef</span>`,
+  steps:[
+    "address?: {...} — optional property; may be undefined",
+    "u = {name:'Alice'} — no address; u.address is undefined",
+    "u.address?.city — if address is undefined, short-circuits to undefined ✓",
+    "city?.toUpperCase() — city is string|undefined; ?. handles the undefined case ✓",
+    "city.toUpperCase() — city could be undefined; ERROR without ?. ✗",
+    "u.address.city — address is optional; accessing .city may throw: ERROR ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"address?: optional",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"u.address=undefined",t:"f-active"}],
+    [{l:"module()",t:"f-global"},{l:"?.  short-circuit",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"city?. chained ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: city.toUpper",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: u.address.city",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"address?: {city:string} | undefined"}],
+    [{t:"d-transform",i:"⇒",v:"u.address is undefined (omitted)"}],
+    [{t:"d-transform",i:"⇒",v:"u.address?.city → undefined (safe)"},{t:"log-green",i:"✓",v:"city: string | undefined ✓"}],
+    [{t:"d-transform",i:"⇒",v:"city?.toUpperCase() — safe chaining"},{t:"log-green",i:"✓",v:"result: string | undefined ✓"}],
+    [{t:"d-special",i:"!",v:"city is string|undefined"},{t:"log-red",i:"✗",v:"Object is possibly 'undefined'"}],
+    [{t:"d-special",i:"!",v:"u.address is undefined"},{t:"log-red",i:"✗",v:"Cannot read .city: address possibly undefined"}],
+  ],
+  mem:[
+    {g:[{k:"User",v:"interface",s:"mv-new"}],l:[],c:[{k:"address",v:"optional: {city}|undef"}]},
+    {g:[{k:"u",v:"User ✓",s:"mv-new"}],l:[],c:[{k:"u.address",v:"undefined (omitted)"}]},
+    {g:[{k:"u",v:"User"}],l:[],c:[{k:"city",v:"string|undefined",s:"mv-new"}]},
+    {g:[{k:"city",v:"string|undefined"}],l:[],c:[{k:"city?.upper",v:"str|undef ✓",s:"mv-changed"}]},
+    {g:[{k:"city",v:"string|undefined"}],l:[],c:[{k:"city.upper",v:"✗ maybe undef",s:"mv-special"}]},
+    {g:[{k:"u.address",v:"undefined"}],l:[],c:[{k:"u.address.city",v:"✗ cannot read",s:"mv-special"}]},
+  ],
+}]
+},
+{num:15,title:"Readonly & Const Assertions",tag:"readonly · Readonly<T> · as const",
+concept:"TypeScript has three tools for immutability. The <code>readonly</code> modifier on properties prevents reassignment after initialization. The <code>Readonly&lt;T&gt;</code> utility type creates a version of <code>T</code> where every property is <code>readonly</code>. The <code>as const</code> assertion freezes an object or array so every value becomes a <em>literal type</em> and every property becomes <code>readonly</code> — the most powerful of the three.",
+callout:null,
+refs:[
+  {lbl:"readonly",cls:"",title:"Property modifier",sub:"cannot reassign after init"},
+  {lbl:"Readonly<T>",cls:"",title:"Utility type",sub:"makes all props readonly"},
+  {lbl:"as const",cls:"",title:"Const assertion",sub:"literals + readonly recursively"},
+],
+memPanelTitle:"Type environment",
+legend:[
+  {color:"var(--purple)",label:"Readonly type"},
+  {color:"var(--green)",label:"Read access ✓"},
+  {color:"var(--red)",label:"Write denied ✗"},
+  {color:"var(--orange)",label:"Literal type inferred"},
+],
+examples:[{
+  name:"readonly on interface properties and arrays",
+  desc:"Apply <code>readonly</code> to interface properties or use <code>readonly T[]</code> for immutable arrays. TypeScript blocks all mutation at compile time.",
+  code:`<span class="kw">interface</span> Config {
+  <span class="kw">readonly</span> <span id="gc0">host</span>: <span class="kw">string</span>;
+  <span class="kw">readonly</span> <span id="gc1">port</span>: <span class="kw">number</span>;
+}
+<span class="kw">const</span> <span id="gc2">c</span>: Config = { host: <span class="str">"localhost"</span>, port: 3000 };
+<span id="gc3">c.host</span> = <span class="str">"other"</span>; <span class="cm">// ✗ readonly</span>
+<span class="kw">const</span> <span id="gc4">nums</span>: <span class="kw">readonly</span> <span class="kw">number</span>[] = [1, 2, 3];
+<span id="gc5">nums</span>.push(4);    <span class="cm">// ✗ readonly array</span>`,
+  steps:[
+    "readonly host: string — host can be set once, never changed",
+    "readonly port: number — port similarly immutable",
+    "c = {host:'localhost', port:3000} — both props set at creation ✓",
+    "c.host = 'other' — cannot reassign readonly property ✗",
+    "readonly number[] — immutable array; no push, pop, splice etc.",
+    "nums.push(4) — push mutates array; blocked by readonly ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"readonly host",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"readonly port",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"c: Config ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: c.host write",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"nums: readonly []",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: nums.push",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"readonly host: string"}],
+    [{t:"d-input",i:"→",v:"readonly port: number"}],
+    [{t:"d-transform",i:"⇒",v:"c created with both props"},{t:"log-green",i:"✓",v:"c: Config ✓"}],
+    [{t:"d-special",i:"!",v:"c.host write attempt"},{t:"log-red",i:"✗",v:"Cannot assign to 'host' read-only property"}],
+    [{t:"d-input",i:"→",v:"readonly number[] — no mutation methods"}],
+    [{t:"d-special",i:"!",v:"push mutates the array"},{t:"log-red",i:"✗",v:"Property 'push' does not exist on 'readonly number[]'"}],
+  ],
+  mem:[
+    {g:[{k:"Config",v:"interface",s:"mv-new"}],l:[{k:"host",v:"readonly: string",s:"mv-new"}],c:[]},
+    {g:[{k:"Config",v:"interface"}],l:[{k:"host",v:"readonly: str"},{k:"port",v:"readonly: num",s:"mv-new"}],c:[]},
+    {g:[{k:"c",v:"Config ✓",s:"mv-new"}],l:[],c:[{k:"c.host",v:"'localhost'"},{k:"c.port",v:"3000"}]},
+    {g:[{k:"c",v:"Config"}],l:[],c:[{k:"c.host",v:"readonly ✗",s:"mv-special"}]},
+    {g:[{k:"nums",v:"readonly number[]",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"nums",v:"readonly number[]"}],l:[],c:[{k:"push()",v:"✗ no mutation",s:"mv-special"}]},
+  ],
+},{
+  name:"Readonly<T> utility type",
+  desc:"<code>Readonly&lt;T&gt;</code> is a built-in mapped type that takes type <code>T</code> and returns a new type where every property is <code>readonly</code>. Useful when you want to freeze an object type without rewriting its definition.",
+  code:`<span class="kw">interface</span> <span id="gc0">User</span> { name: <span class="kw">string</span>; age: <span class="kw">number</span> }
+<span class="kw">type</span> <span id="gc1">FrozenUser</span> = Readonly&lt;User&gt;;
+<span class="cm">// { readonly name: string; readonly age: number }</span>
+<span class="kw">const</span> <span id="gc2">u</span>: FrozenUser = { name: <span class="str">"Alice"</span>, age: 30 };
+<span id="gc3">u.name</span>;           <span class="cm">// ✓ read is ok</span>
+<span id="gc4">u.name</span> = <span class="str">"Bob"</span>;   <span class="cm">// ✗ readonly</span>
+<span id="gc5">u.age</span>  = 25;      <span class="cm">// ✗ readonly</span>`,
+  steps:[
+    "User interface — mutable: name and age can be changed freely",
+    "Readonly<User> — all properties become readonly automatically",
+    "u: FrozenUser — created with valid values ✓",
+    "u.name — reading a readonly property: always fine ✓",
+    "u.name = 'Bob' — writing to readonly property: ERROR ✗",
+    "u.age = 25 — same: readonly blocks all assignment ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"User: mutable",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"Readonly<User>",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"u: FrozenUser ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"u.name: read ✓",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: u.name write",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: u.age write",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-input",i:"→",v:"User: {name:str, age:num}"}],
+    [{t:"d-transform",i:"⇒",v:"Readonly<User>: all props get readonly"},{t:"d-output",i:"←",v:"{ readonly name, readonly age }"}],
+    [{t:"d-transform",i:"⇒",v:"u created: {name:'Alice',age:30}"},{t:"log-green",i:"✓",v:"u: FrozenUser ✓"}],
+    [{t:"d-transform",i:"⇒",v:"reading u.name"},{t:"log-green",i:"✓",v:"read access always allowed ✓"}],
+    [{t:"d-special",i:"!",v:"u.name = 'Bob'"},{t:"log-red",i:"✗",v:"Cannot assign to 'name' read-only property"}],
+    [{t:"d-special",i:"!",v:"u.age = 25"},{t:"log-red",i:"✗",v:"Cannot assign to 'age' read-only property"}],
+  ],
+  mem:[
+    {g:[{k:"User",v:"{name:str,age:num}",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"User",v:"{name:str,age:num}"},{k:"FrozenUser",v:"Readonly<User>",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"u",v:"FrozenUser ✓",s:"mv-new"}],l:[],c:[{k:"u.name",v:"'Alice' (readonly)"},{k:"u.age",v:"30 (readonly)"}]},
+    {g:[{k:"u",v:"FrozenUser"}],l:[],c:[{k:"u.name",v:"'Alice' ← read ✓",s:"mv-changed"}]},
+    {g:[{k:"u",v:"FrozenUser"}],l:[],c:[{k:"u.name",v:"write ✗",s:"mv-special"}]},
+    {g:[{k:"u",v:"FrozenUser"}],l:[],c:[{k:"u.age",v:"write ✗",s:"mv-special"}]},
+  ],
+},{
+  name:"as const assertion",
+  desc:"<code>as const</code> freezes a literal and makes every property <code>readonly</code> with a <em>literal type</em> rather than a widened type. Applied recursively to nested objects.",
+  code:`<span class="kw">const</span> config = {
+  host: <span class="str">"localhost"</span>,
+  port: 3000,
+} <span id="gc0"><span class="kw">as</span> <span class="kw">const</span></span>;
+<span class="cm">// { readonly host: "localhost"; readonly port: 3000 }</span>
+<span id="gc1">config.host</span> = <span class="str">"x"</span>;           <span class="cm">// ✗ readonly</span>
+<span class="kw">const</span> <span id="gc2">dirs</span> = [<span class="str">"up"</span>, <span class="str">"down"</span>] <span class="kw">as</span> <span class="kw">const</span>;
+<span class="cm">// readonly ["up", "down"]</span>
+<span class="kw">const</span> <span id="gc3">d</span>: <span class="str">"up"</span> | <span class="str">"down"</span> = <span id="gc4">dirs[0]</span>;
+<span id="gc5">dirs</span>.push(<span class="str">"left"</span>); <span class="cm">// ✗ readonly</span>`,
+  steps:[
+    "as const — freezes object; every value becomes a literal type",
+    "config.host = 'x' — host is readonly 'localhost'; cannot reassign ✗",
+    "['up','down'] as const — tuple becomes readonly; values are literals",
+    "d: 'up' | 'down' — literal union type from as const tuple ✓",
+    "dirs[0] — type: 'up' (literal, not just string) ✓",
+    "dirs.push('left') — readonly tuple; push is not allowed ✗",
+  ],
+  hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+  frames:[
+    [{l:"module()",t:"f-global"},{l:"as const → literals",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: config.host write",t:"f-special"}],
+    [{l:"module()",t:"f-global"},{l:"as const → readonly tuple",t:"f-hof"}],
+    [{l:"module()",t:"f-global"},{l:"literal union type",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"dirs[0]: 'up' literal",t:"f-cb"}],
+    [{l:"module()",t:"f-global"},{l:"ERROR: dirs.push",t:"f-special"}],
+  ],
+  flow:[
+    [{t:"d-transform",i:"⇒",v:"as const: host→'localhost', port→3000"},{t:"log-orange",i:"!",v:"literals not widened to string/number"}],
+    [{t:"d-special",i:"!",v:"config.host is readonly 'localhost'"},{t:"log-red",i:"✗",v:"Cannot assign to 'host' read-only property"}],
+    [{t:"d-transform",i:"⇒",v:"as const on array → readonly tuple"},{t:"log-orange",i:"!",v:"['up','down'] → readonly ['up','down']"}],
+    [{t:"d-transform",i:"⇒",v:"'up'|'down' literal union from tuple"},{t:"log-green",i:"✓",v:"useful for limiting valid values ✓"}],
+    [{t:"d-transform",i:"⇒",v:"dirs[0] type: 'up' (literal)"},{t:"log-green",i:"✓",v:"precise literal type ✓"}],
+    [{t:"d-special",i:"!",v:"readonly tuple — no mutation"},{t:"log-red",i:"✗",v:"Property 'push' does not exist on readonly tuple"}],
+  ],
+  mem:[
+    {g:[{k:"config.host",v:"'localhost' (literal)",s:"mv-new"},{k:"config.port",v:"3000 (literal)",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"config",v:"readonly literals"}],l:[],c:[{k:"config.host",v:"readonly ✗",s:"mv-special"}]},
+    {g:[{k:"dirs",v:"readonly ['up','down']",s:"mv-new"}],l:[],c:[]},
+    {g:[{k:"dirs",v:"readonly tuple"}],l:[],c:[{k:"type",v:"'up'|'down' union",s:"mv-new"}]},
+    {g:[{k:"dirs",v:"readonly tuple"},{k:"d",v:"'up'|'down' ✓",s:"mv-new"}],l:[],c:[{k:"dirs[0]",v:"'up' (literal)"}]},
+    {g:[{k:"dirs",v:"readonly tuple"}],l:[],c:[{k:"push()",v:"✗ readonly",s:"mv-special"}]},
+  ],
+}]
+},
+];
+
+// ── ENGINE ──────────────────────────────────────────
+let curCh=0,curEx=0,curStep=-1,autoTimer=null;
+const ch=()=>CHAPTERS[curCh];
+const ex=()=>ch().examples[curEx];
+
+function buildNav(){
+  document.getElementById('ch-tabs').innerHTML=CHAPTERS.map((c,i)=>
+    `<div class="ch-tab${i===curCh?' active':' done'}" onclick="loadChapter(${i})">Ch.${c.num} ${c.title}</div>`
+  ).join('');
+  document.getElementById('side-list').innerHTML=CHAPTERS.map((c,i)=>
+    `<div class="sideitem${i===curCh?' active':' done'}" onclick="loadChapter(${i});closeSidebar()">
+      <div class="si-num">${c.num}</div>
+      <div class="si-info"><div class="si-title">${c.title}</div><div class="si-tag">${c.tag}</div></div>
+    </div>`
+  ).join('');
+  setTimeout(()=>{
+    const at=document.querySelector('.ch-tab.active');
+    if(at)at.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    const as=document.querySelector('.sideitem.active');
+    if(as)as.scrollIntoView({block:'nearest'});
+  },50);
+}
+
+function loadChapter(i){
+  stopAuto();curCh=i;curEx=0;curStep=-1;
+  buildNav();
+  const c=ch();
+  document.getElementById('hdr-badge').textContent='Ch. '+c.num;
+  document.getElementById('hdr-title').textContent=c.title;
+  document.getElementById('concept-text').innerHTML=c.concept;
+  document.getElementById('mem-panel-title').textContent=c.memPanelTitle||'Type environment';
+  const ca=document.getElementById('callout-area');
+  ca.innerHTML=c.callout?`<div class="callout ${c.callout.type}">${c.callout.text}</div>`:'';
+  const ra=document.getElementById('ref-area');
+  ra.innerHTML=c.refs&&c.refs.length?`<div class="ref-row">${c.refs.map(r=>`<div class="ref-card"><div class="ref-lbl">${r.lbl}</div><div class="ref-title">${r.title}</div><div class="ref-sub">${r.sub}</div></div>`).join('')}</div>`:'';
+  document.getElementById('legend').innerHTML=(c.legend||[]).map(l=>`<div class="leg-item"><div class="leg-dot" style="background:${l.color}"></div>${l.label}</div>`).join('');
+  document.getElementById('card-code').innerHTML=ex().code;
+  clearCards();updateExHeader();buildDots();
+  document.getElementById('main-body').scrollTop=0;
+}
+
+function updateExHeader(){
+  const e=ex();
+  document.getElementById('ex-name').textContent=e.name;
+  document.getElementById('ex-ctr').textContent=` ${curEx+1} of ${ch().examples.length}`;
+  document.getElementById('ex-desc').innerHTML=e.desc;
+  document.getElementById('ex-prev').disabled=curEx===0;
+  document.getElementById('ex-next').disabled=curEx===ch().examples.length-1;
+}
+
+function switchEx(dir){
+  const n=curEx+dir;
+  if(n<0||n>=ch().examples.length)return;
+  stopAuto();curEx=n;curStep=-1;
+  document.getElementById('card-code').innerHTML=ex().code;
+  clearCards();updateExHeader();buildDots();
+}
+
+function buildDots(){
+  document.getElementById('sdots').innerHTML=ex().steps.map((_,i)=>`<div class="sdot" id="sd${i}"></div>`).join('');
+  updateUI();
+}
+
+function updateUI(){
+  const total=ex().steps.length,s=curStep;
+  ex().steps.forEach((_,i)=>{
+    const d=document.getElementById('sd'+i);
+    if(d)d.className='sdot'+(i<s?' done':i===s?' cur':'');
+  });
+  document.getElementById('sctr').textContent=s<0?`0/${total}`:`${s+1}/${total}`;
+  document.getElementById('sdesc').textContent=s<0?'Press Next':(ex().steps[s]||'');
+  document.getElementById('btn-prev').disabled=s<=0;
+  document.getElementById('btn-next').disabled=s>=total-1;
+  if(s>=total-1&&autoTimer)stopAuto();
+}
+
+function renderStep(s){
+  const e=ex();
+  document.querySelectorAll('[id^="gc"]').forEach(el=>el.classList.remove('hl'));
+  const hid=e.hl[s];if(hid){const el=document.getElementById(hid);if(el)el.classList.add('hl');}
+  document.getElementById('card-stack').innerHTML=(e.frames[s]||[]).map(f=>`<div class="frame ${f.t} show">${f.l}</div>`).join('');
+  renderFlow(e.flow[s]||[]);
+  renderMem(e.mem[s]||{g:[],l:[],c:[]});
+  updateUI();
+}
+
+function renderFlow(items){
+  const all=items.filter(x=>x.t!=='log-item'&&!x.t.startsWith('log-')&&x.t!=='log-special');
+  const logs=items.filter(x=>x.t==='log-item'||x.t.startsWith('log-')||x.t==='log-special');
+  let h='';
+  if(all.length){
+    h+=`<div class="df-lbl">Type check</div>`;
+    all.forEach(d=>{
+      const cls=d.t==='d-special'?'d-special':d.t==='d-transform'?'d-transform':d.t==='d-output'?'d-output':'d-input';
+      const icon=d.t==='d-special'?'!':d.t==='d-transform'?'⇒':d.t==='d-output'?'←':'→';
+      h+=`<div class="ditem ${cls} show"><div class="dicon">${icon}</div><div class="dtxt">${d.v}</div></div>`;
+    });
+  }
+  if(logs.length){
+    if(all.length)h+=`<div class="df-div"></div>`;
+    h+=`<div class="df-lbl">Result</div>`;
+    logs.forEach(l=>{
+      const cls=l.t==='log-special'?'d-special log-item':l.t||'log-item log-orange';
+      const icon=l.i||'>';
+      h+=`<div class="ditem log-item ${cls} show"><div class="dicon">${icon}</div><div class="dtxt">${l.v}</div></div>`;
+    });
+  }
+  document.getElementById('card-flow').innerHTML=h;
+}
+
+function renderMem(mem){
+  const secs=[
+    {k:'g',l:'Global scope',cls:'mt-global'},
+    {k:'l',l:'Local scope',cls:'mt-local'},
+    {k:'c',l:'Type context',cls:'mt-closure'},
+  ];
+  document.getElementById('card-mem').innerHTML=secs.map(sec=>{
+    const rows=mem[sec.k]||[];
+    return `<div class="memsec">
+      <span class="memtitle ${sec.cls}">${sec.l}</span>
+      <div class="memrows">${rows.length
+        ?rows.map(r=>`<div class="memrow show"><span class="memkey">${r.k}</span><span class="memval ${r.s||''}">${r.v}</span></div>`).join('')
+        :'<div class="mem-empty">— empty —</div>'
+      }</div>
+    </div>`;
+  }).join('');
+}
+
+function clearCards(){
+  ['card-stack','card-flow','card-mem'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
+  document.querySelectorAll('[id^="gc"]').forEach(el=>el.classList.remove('hl'));
+}
+
+function nav(dir){
+  const total=ex().steps.length;
+  if(dir===1&&curStep<total-1){curStep++;renderStep(curStep);}
+  else if(dir===-1){
+    if(curStep>0){curStep--;renderStep(curStep);}
+    else if(curStep===0){curStep=-1;clearCards();updateUI();}
+  }
+}
+
+function stopAuto(){clearInterval(autoTimer);autoTimer=null;const b=document.getElementById('btn-auto');if(b)b.textContent='Auto-play';}
+function autoPlay(){
+  if(autoTimer){stopAuto();return;}
+  if(curStep>=ex().steps.length-1){curStep=-1;clearCards();buildDots();}
+  document.getElementById('btn-auto').textContent='Stop';
+  autoTimer=setInterval(()=>{
+    if(curStep>=ex().steps.length-1){stopAuto();return;}
+    curStep++;renderStep(curStep);
+  },850);
+}
+
+function toggleSidebar(){
+  const s=document.getElementById('sidebar');
+  s.classList.toggle('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nav(1);}
+  if(e.key==='ArrowLeft'){e.preventDefault();nav(-1);}
+  if(e.key==='ArrowUp'){e.preventDefault();switchEx(-1);}
+  if(e.key==='ArrowDown'){e.preventDefault();switchEx(1);}
+  if(e.key==='1'&&e.metaKey===false)loadChapter(Math.max(0,curCh-1));
+  if(e.key==='2'&&e.metaKey===false)loadChapter(Math.min(CHAPTERS.length-1,curCh+1));
+});
+
+loadChapter(0);
+</script>
+</body>
+</html>
