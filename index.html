@@ -2470,6 +2470,1003 @@ examples:[{
   ],
 }]
 },
+{
+  num:16,title:"Mapped Types",tag:"[K in keyof T]",
+  concept:"<strong>Mapped types</strong> let you create new types by iterating over the keys of an existing type. The syntax <code>[K in keyof T]</code> loops over every key K of T. You can apply <strong>modifiers</strong>: <code>+readonly</code>/<code>-readonly</code> to add/remove readonly, and <code>+?</code>/<code>-?</code> to add/remove optionality.",
+  callout:{type:"callout-purple",text:"Mapped types are the foundation of built-in utility types like Partial, Required, and Readonly — you can build them yourself with [K in keyof T]."},
+  refs:[{lbl:"Mapped Types",cls:"",title:"Mapped Types",sub:"typescriptlang.org"},{lbl:"Modifiers",cls:"",title:"+/- modifiers",sub:"typescriptlang.org"}],
+  memPanelTitle:"Type environment",
+  legend:[{color:"var(--purple)",label:"mapped type"},{color:"var(--green)",label:"modifier result"},{color:"var(--orange)",label:"key iteration"},{color:"var(--red)",label:"type error"}],
+  examples:[{
+    name:"Basic mapped type",
+    desc:"<code>[K in keyof T]: T[K]</code> copies every property of T. Change <code>T[K]</code> to <code>T[K] | null</code> to make all properties nullable — a transformation impossible with simple generics.",
+    code:`<span class="kw">type</span> <span id="gc0">Nullable&lt;T&gt;</span> = {
+  [K <span class="kw">in</span> <span class="kw">keyof</span> T]: T[K] | <span class="kw">null</span>;
+};
+<span class="kw">interface</span> <span id="gc1">User</span> { name: <span class="kw">string</span>; age: <span class="kw">number</span> }
+<span class="kw">type</span> <span id="gc2">NullableUser</span> = Nullable&lt;User&gt;;
+<span class="cm">// { name: string | null; age: number | null }</span>
+<span class="kw">const</span> <span id="gc3">u</span>: NullableUser = { name: <span class="str">"Alice"</span>, age: <span class="kw">null</span> };
+<span id="gc4">u.name</span>;   <span class="cm">// string | null ✓</span>
+<span id="gc5">u.age</span>;    <span class="cm">// number | null ✓</span>`,
+    steps:[
+      "Nullable<T> — mapped type: for every key K in T, value becomes T[K]|null",
+      "User interface — has name:string and age:number",
+      "NullableUser = Nullable<User> — each property gets |null added",
+      "u: NullableUser — age:null is now valid ✓",
+      "u.name — type is string|null ✓",
+      "u.age — type is number|null ✓",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"Nullable<T>: map keys",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"User: name,age",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"NullableUser mapped",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"u: NullableUser ✓",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"u.name: str|null",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"u.age: num|null",t:"f-active"}],
+    ],
+    flow:[
+      [{t:"d-transform",i:"⇒",v:"[K in keyof T]: T[K]|null"},{t:"log-purple",i:"!",v:"iterates over every key of T"}],
+      [{t:"d-input",i:"→",v:"User: {name:string, age:number}"}],
+      [{t:"d-transform",i:"⇒",v:"NullableUser: {name:str|null, age:num|null}"},{t:"log-green",i:"✓",v:"all properties can now be null"}],
+      [{t:"d-transform",i:"⇒",v:"u = {name:'Alice', age:null}"},{t:"log-green",i:"✓",v:"null is valid for age ✓"}],
+      [{t:"d-output",i:"←",v:"u.name: string | null"},{t:"log-green",i:"✓",v:"nullable access ✓"}],
+      [{t:"d-output",i:"←",v:"u.age: number | null"},{t:"log-green",i:"✓",v:"nullable access ✓"}],
+    ],
+    mem:[
+      {g:[{k:"Nullable<T>",v:"mapped type",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Nullable<T>",v:"mapped type"},{k:"User",v:"{name:str,age:num}",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"NullableUser",v:"{name:str|null,age:num|null}",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"u",v:"NullableUser",s:"mv-new"}],l:[],c:[{k:"u.name",v:"'Alice'"},{k:"u.age",v:"null ✓"}]},
+      {g:[{k:"u",v:"NullableUser"}],l:[],c:[{k:"u.name",v:"string|null",s:"mv-changed"}]},
+      {g:[{k:"u",v:"NullableUser"}],l:[],c:[{k:"u.age",v:"number|null",s:"mv-changed"}]},
+    ],
+  },{
+    name:"Modifiers: -readonly and -?",
+    desc:"Adding <code>-</code> before <code>readonly</code> or <code>?</code> in a mapped type <em>removes</em> that modifier. This is how <code>Required&lt;T&gt;</code> removes optionality and <code>Mutable&lt;T&gt;</code> removes readonly.",
+    code:`<span class="kw">type</span> <span id="gc0">Mutable&lt;T&gt;</span> = {
+  -<span class="kw">readonly</span> [K <span class="kw">in</span> <span class="kw">keyof</span> T]: T[K];
+};
+<span class="kw">type</span> <span id="gc1">Required2&lt;T&gt;</span> = {
+  [K <span class="kw">in</span> <span class="kw">keyof</span> T]-?: T[K];
+};
+<span class="kw">interface</span> <span id="gc2">Cfg</span> { <span class="kw">readonly</span> host?: <span class="kw">string</span>; <span class="kw">readonly</span> port?: <span class="kw">number</span> }
+<span class="kw">type</span> <span id="gc3">MCfg</span> = Mutable&lt;Cfg&gt;;  <span class="cm">// host?:string, port?:number (writable)</span>
+<span class="kw">type</span> <span id="gc4">RCfg</span> = Required2&lt;Cfg&gt;; <span class="cm">// readonly host:string, port:number</span>
+<span class="kw">const</span> <span id="gc5">c</span>: RCfg = { host: <span class="str">"x"</span>, port: 80 };`,
+    steps:[
+      "Mutable<T> — -readonly removes readonly from every property",
+      "Required2<T> — -? removes optionality from every property",
+      "Cfg — readonly and optional properties: readonly host?, readonly port?",
+      "MCfg = Mutable<Cfg> — properties become writable but stay optional",
+      "RCfg = Required2<Cfg> — properties become required but stay readonly",
+      "c: RCfg — must provide both host and port ✓",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"Mutable<T>: -readonly",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"Required2<T>: -?",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"Cfg: rdonly+optional",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"MCfg: writable+optional",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"RCfg: rdonly+required",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"c: RCfg ✓",t:"f-active"}],
+    ],
+    flow:[
+      [{t:"d-transform",i:"⇒",v:"-readonly: strips readonly modifier"},{t:"log-purple",i:"!",v:"writable properties"}],
+      [{t:"d-transform",i:"⇒",v:"-?: strips optional modifier"},{t:"log-purple",i:"!",v:"required properties"}],
+      [{t:"d-input",i:"→",v:"Cfg: readonly host?, readonly port?"}],
+      [{t:"d-output",i:"←",v:"MCfg: host?, port? (mutable)"},{t:"log-green",i:"✓",v:"-readonly applied ✓"}],
+      [{t:"d-output",i:"←",v:"RCfg: readonly host, port"},{t:"log-green",i:"✓",v:"-? applied ✓"}],
+      [{t:"d-transform",i:"⇒",v:"c = {host:'x', port:80}"},{t:"log-green",i:"✓",v:"both required fields present ✓"}],
+    ],
+    mem:[
+      {g:[{k:"Mutable<T>",v:"-readonly mapped",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Mutable<T>",v:"-readonly"},{k:"Required2<T>",v:"-? mapped",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Cfg",v:"rdonly host?,port?",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"MCfg",v:"writable host?,port?",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"RCfg",v:"rdonly host,port (req)",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"c",v:"RCfg ✓",s:"mv-new"}],l:[],c:[{k:"c.host",v:"'x'"},{k:"c.port",v:"80"}]},
+    ],
+  }],
+},{
+  num:17,title:"Conditional Types",tag:"T extends U ? X : Y",
+  concept:"<strong>Conditional types</strong> let you select one of two types based on whether a type <em>extends</em> another. The syntax is <code>T extends U ? X : Y</code>. They work at the type level, enabling sophisticated type transformations — especially when combined with <code>infer</code>.",
+  callout:{type:"callout-green",text:"Conditional types distribute over union types: NonNullable<string|null|undefined> becomes NonNullable<string>|NonNullable<null>|NonNullable<undefined> = string."},
+  refs:[{lbl:"Conditional Types",cls:"",title:"Conditional Types",sub:"typescriptlang.org"},{lbl:"Distribution",cls:"",title:"Distributive conditional types",sub:"typescriptlang.org"}],
+  memPanelTitle:"Type environment",
+  legend:[{color:"var(--purple)",label:"condition check"},{color:"var(--green)",label:"true branch"},{color:"var(--orange)",label:"false branch"},{color:"var(--red)",label:"type error"}],
+  examples:[{
+    name:"Basic conditional type",
+    desc:"<code>IsString&lt;T&gt;</code> checks if T extends string. When T is a string type it resolves to <code>'yes'</code>; otherwise <code>'no'</code>. This is purely a compile-time type-level if/else.",
+    code:`<span class="kw">type</span> <span id="gc0">IsString&lt;T&gt;</span> = T <span class="kw">extends</span> <span class="kw">string</span> ? <span class="str">"yes"</span> : <span class="str">"no"</span>;
+<span class="kw">type</span> <span id="gc1">A</span> = IsString&lt;<span class="kw">string</span>&gt;;   <span class="cm">// "yes"</span>
+<span class="kw">type</span> <span id="gc2">B</span> = IsString&lt;<span class="kw">number</span>&gt;;   <span class="cm">// "no"</span>
+<span class="kw">type</span> <span id="gc3">C</span> = IsString&lt;<span class="str">"hello"</span>&gt;; <span class="cm">// "yes" — literal extends string</span>
+<span class="kw">type</span> <span id="gc4">NonNullable2&lt;T&gt;</span> = T <span class="kw">extends</span> <span class="kw">null</span> | <span class="kw">undefined</span> ? <span class="kw">never</span> : T;
+<span class="kw">type</span> <span id="gc5">D</span> = NonNullable2&lt;<span class="kw">string</span> | <span class="kw">null</span>&gt;; <span class="cm">// string</span>`,
+    steps:[
+      "IsString<T> — conditional: T extends string ? 'yes' : 'no'",
+      "A = IsString<string> — string extends string → true → 'yes'",
+      "B = IsString<number> — number extends string → false → 'no'",
+      "C = IsString<'hello'> — literal 'hello' extends string → true → 'yes'",
+      "NonNullable2<T> — extends null|undefined ? never : T",
+      "D = NonNullable2<string|null> — distributes: string→string, null→never → string",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"IsString<T>: cond type",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"A: string→'yes'",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"B: number→'no'",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"C: 'hello'→'yes'",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"NonNullable2<T>",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"D: str|null→string",t:"f-cb"}],
+    ],
+    flow:[
+      [{t:"d-transform",i:"⇒",v:"T extends string ? 'yes' : 'no'"},{t:"log-purple",i:"!",v:"type-level conditional branch"}],
+      [{t:"d-transform",i:"⇒",v:"string extends string → true"},{t:"log-green",i:"✓",v:"A = 'yes'"}],
+      [{t:"d-transform",i:"⇒",v:"number extends string → false"},{t:"log-orange",i:"!",v:"B = 'no'"}],
+      [{t:"d-transform",i:"⇒",v:"'hello' extends string → true"},{t:"log-green",i:"✓",v:"C = 'yes' — literal fits string"}],
+      [{t:"d-transform",i:"⇒",v:"T extends null|undefined ? never : T"},{t:"log-purple",i:"!",v:"distributes over unions"}],
+      [{t:"d-transform",i:"⇒",v:"string→string, null→never"},{t:"log-green",i:"✓",v:"D = string (never filtered out)"}],
+    ],
+    mem:[
+      {g:[{k:"IsString<T>",v:"cond type",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"A",v:"'yes'",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"A",v:"'yes'"},{k:"B",v:"'no'",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"A",v:"'yes'"},{k:"B",v:"'no'"},{k:"C",v:"'yes'",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"NonNullable2<T>",v:"cond type",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"D",v:"string",s:"mv-new"}],l:[],c:[{k:"null→never",v:"filtered ✓"}]},
+    ],
+  },{
+    name:"Conditional types with generics",
+    desc:"Conditional types in generic functions let TypeScript narrow the return type based on the input. <code>Flatten&lt;T&gt;</code> unwraps an array type to its element type, or returns T unchanged if it is not an array.",
+    code:`<span class="kw">type</span> <span id="gc0">Flatten&lt;T&gt;</span> = T <span class="kw">extends</span> <span class="kw">any</span>[] ? T[<span class="kw">number</span>] : T;
+<span class="kw">type</span> <span id="gc1">Str</span>  = Flatten&lt;<span class="kw">string</span>[]&gt;;  <span class="cm">// string</span>
+<span class="kw">type</span> <span id="gc2">Num</span>  = Flatten&lt;<span class="kw">number</span>&gt;;   <span class="cm">// number (not array)</span>
+<span class="kw">type</span> Nested = Flatten&lt;<span class="kw">boolean</span>[][]&gt;; <span class="cm">// boolean[] (one level)</span>
+<span class="kw">function</span> <span class="fn"><span id="gc3">first</span></span>&lt;T <span class="kw">extends</span> <span class="kw">any</span>[]&gt;(arr: T): <span id="gc4">Flatten&lt;T&gt;</span> {
+  <span class="kw">return</span> arr[0] <span class="kw">as</span> <span class="kw">any</span>;
+}
+<span class="kw">const</span> <span id="gc5">x</span> = <span class="fn">first</span>([1,2,3]); <span class="cm">// x: number ✓</span>`,
+    steps:[
+      "Flatten<T> — if T is an array, return element type T[number]; else T",
+      "Str = Flatten<string[]> — string[] is array → element type string",
+      "Num = Flatten<number> — number is not array → stays number",
+      "first<T>() — return type is Flatten<T> (conditional on input)",
+      "Flatten<T> in return position — resolves based on actual T",
+      "x = first([1,2,3]) — T inferred as number[]; Flatten<number[]>=number",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"Flatten<T>: unwrap array",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"Str: string[]→string",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"Num: number→number",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"first<T>: ret Flatten<T>",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"Flatten<T> narrows ret",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"x: number ✓",t:"f-cb"}],
+    ],
+    flow:[
+      [{t:"d-transform",i:"⇒",v:"T extends any[] ? T[number] : T"},{t:"log-purple",i:"!",v:"unwrap one array level"}],
+      [{t:"d-transform",i:"⇒",v:"string[] extends any[] → T[number]=string"},{t:"log-green",i:"✓",v:"Str = string"}],
+      [{t:"d-transform",i:"⇒",v:"number not array → returns T=number"},{t:"log-green",i:"✓",v:"Num = number"}],
+      [{t:"d-input",i:"→",v:"first<T extends any[]>(arr:T): Flatten<T>"}],
+      [{t:"d-transform",i:"⇒",v:"conditional resolves at call site"},{t:"log-purple",i:"!",v:"precise return type"}],
+      [{t:"d-output",i:"←",v:"x: Flatten<number[]> = number"},{t:"log-green",i:"✓",v:"x is number ✓"}],
+    ],
+    mem:[
+      {g:[{k:"Flatten<T>",v:"cond array unwrap",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Str",v:"string",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Str",v:"string"},{k:"Num",v:"number",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"first",v:"<T extends any[]>",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"first",v:"ret: Flatten<T>"}],l:[],c:[{k:"Flatten<T>",v:"resolves at call",s:"mv-changed"}]},
+      {g:[{k:"x",v:"number ✓",s:"mv-new"}],l:[],c:[{k:"Flatten<number[]>",v:"=number"}]},
+    ],
+  }],
+},{
+  num:18,title:"Template Literal Types",tag:"`${A}${B}` as types",
+  concept:"<strong>Template literal types</strong> mirror JavaScript template literals at the type level. You can combine string literal types with <code>`${A}${B}`</code> syntax to produce new string literal types. TypeScript also provides <code>Uppercase</code>, <code>Lowercase</code>, <code>Capitalize</code>, and <code>Uncapitalize</code> intrinsic string manipulation types.",
+  callout:{type:"callout-orange",text:"Template literal types are extremely powerful when combined with mapped types and keyof — you can auto-generate setter/getter names or event handler keys from an interface."},
+  refs:[{lbl:"Template Literal Types",cls:"",title:"Template Literal Types",sub:"typescriptlang.org"},{lbl:"Intrinsic String Types",cls:"",title:"Uppercase/Lowercase/Capitalize",sub:"typescriptlang.org"}],
+  memPanelTitle:"Type environment",
+  legend:[{color:"var(--purple)",label:"template literal type"},{color:"var(--green)",label:"result type"},{color:"var(--orange)",label:"string intrinsic"},{color:"var(--red)",label:"type error"}],
+  examples:[{
+    name:"Combining string literal types",
+    desc:"Template literal types concatenate string literal union types producing the cross-product of all combinations. <code>`${Prefix}${Suffix}`</code> where both are unions produces every possible pairing.",
+    code:`<span class="kw">type</span> <span id="gc0">Direction</span> = <span class="str">"left"</span> | <span class="str">"right"</span>;
+<span class="kw">type</span> <span id="gc1">Move</span> = <span class="str">"move-<span class="kw">\${Direction}</span>"</span>;
+<span class="cm">// "move-left" | "move-right"</span>
+<span class="kw">type</span> <span id="gc2">Getter&lt;T <span class="kw">extends</span> <span class="kw">string</span>&gt;</span> = <span class="str">"get<span class="kw">\${Capitalize&lt;T&gt;}</span>"</span>;
+<span class="kw">type</span> <span id="gc3">G</span> = Getter&lt;<span class="str">"name"</span>&gt;;  <span class="cm">// "getName"</span>
+<span class="kw">function</span> <span class="fn"><span id="gc4">move</span></span>(dir: Move) {}
+<span class="fn">move</span>(<span class="str">"move-left"</span>);   <span class="cm">// ✓</span>
+<span class="fn">move</span>(<span id="gc5"><span class="str">"move-up"</span></span>);     <span class="cm">// ✗ not in type</span>`,
+    steps:[
+      "Direction — union of 'left'|'right'",
+      "Move = `move-${Direction}` — produces 'move-left'|'move-right'",
+      "Getter<T> — template with Capitalize: 'name'→'getName'",
+      "G = Getter<'name'> — resolves to 'getName' ✓",
+      "move(dir: Move) — only accepts 'move-left' or 'move-right'",
+      "move('move-up') — ERROR: 'move-up' not in Move type ✗",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"Direction: union",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"Move: template union",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"Getter<T>: capitalize",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"G = 'getName'",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"move(): Move param",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"ERROR: 'move-up' ✗",t:"f-special"}],
+    ],
+    flow:[
+      [{t:"d-input",i:"→",v:"Direction: 'left'|'right'"}],
+      [{t:"d-transform",i:"⇒",v:"`move-${Direction}` cross-product"},{t:"log-green",i:"✓",v:"'move-left'|'move-right'"}],
+      [{t:"d-transform",i:"⇒",v:"Capitalize<T>: 'name'→'Name'"},{t:"log-orange",i:"!",v:"then template: 'get'+'Name'"}],
+      [{t:"d-output",i:"←",v:"G = 'getName'"},{t:"log-green",i:"✓",v:"Capitalize works ✓"}],
+      [{t:"d-input",i:"→",v:"move('move-left') — in Move ✓"},{t:"log-green",i:"✓",v:"valid call ✓"}],
+      [{t:"d-special",i:"!",v:"'move-up' not assignable to Move"},{t:"log-red",i:"✗",v:"Argument of type '\"move-up\"' is not assignable"}],
+    ],
+    mem:[
+      {g:[{k:"Direction",v:"'left'|'right'",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Move",v:"'move-left'|'move-right'",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Getter<T>",v:"template+Capitalize",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"G",v:"'getName'",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"move",v:"(dir:Move)=>void"}],l:[],c:[{k:"move('move-left')",v:"✓"}]},
+      {g:[{k:"move",v:"(dir:Move)=>void"}],l:[],c:[{k:"move('move-up')",v:"✗ invalid",s:"mv-special"}]},
+    ],
+  },{
+    name:"Intrinsic string manipulation types",
+    desc:"TypeScript provides four built-in string manipulation types: <code>Uppercase&lt;S&gt;</code>, <code>Lowercase&lt;S&gt;</code>, <code>Capitalize&lt;S&gt;</code>, and <code>Uncapitalize&lt;S&gt;</code>. These operate on string literal types at compile time.",
+    code:`<span class="kw">type</span> <span id="gc0">U</span> = Uppercase&lt;<span class="str">"hello"</span>&gt;;      <span class="cm">// "HELLO"</span>
+<span class="kw">type</span> <span id="gc1">L</span> = Lowercase&lt;<span class="str">"WORLD"</span>&gt;;      <span class="cm">// "world"</span>
+<span class="kw">type</span> <span id="gc2">Cap</span> = Capitalize&lt;<span class="str">"foo"</span>&gt;;     <span class="cm">// "Foo"</span>
+<span class="kw">type</span> <span id="gc3">Uncap</span> = Uncapitalize&lt;<span class="str">"Bar"</span>&gt;; <span class="cm">// "bar"</span>
+<span class="kw">type</span> Keys = <span class="str">"name"</span> | <span class="str">"age"</span>;
+<span class="kw">type</span> <span id="gc4">EventMap</span> = { [K <span class="kw">in</span> Keys <span class="kw">as</span> <span class="str">"on<span class="kw">\${Capitalize&lt;K&gt;}</span>"</span>]: () => <span class="kw">void</span> };
+<span class="cm">// { onName: ()=>void; onAge: ()=>void }</span>
+<span class="kw">const</span> <span id="gc5">e</span>: EventMap = { onName: ()=>{}, onAge: ()=>{} };`,
+    steps:[
+      "Uppercase<'hello'> — all chars uppercased → 'HELLO'",
+      "Lowercase<'WORLD'> — all chars lowercased → 'world'",
+      "Capitalize<'foo'> — first char uppercased → 'Foo'",
+      "Uncapitalize<'Bar'> — first char lowercased → 'bar'",
+      "EventMap — mapped type with key remapping via as template literal",
+      "e: EventMap — must have onName and onAge handlers ✓",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"Uppercase: 'HELLO'",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"Lowercase: 'world'",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"Capitalize: 'Foo'",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"Uncapitalize: 'bar'",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"EventMap: key remap",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"e: EventMap ✓",t:"f-active"}],
+    ],
+    flow:[
+      [{t:"d-transform",i:"⇒",v:"Uppercase<'hello'>"},{t:"d-output",i:"←",v:"'HELLO'"}],
+      [{t:"d-transform",i:"⇒",v:"Lowercase<'WORLD'>"},{t:"d-output",i:"←",v:"'world'"}],
+      [{t:"d-transform",i:"⇒",v:"Capitalize<'foo'>"},{t:"d-output",i:"←",v:"'Foo'"}],
+      [{t:"d-transform",i:"⇒",v:"Uncapitalize<'Bar'>"},{t:"d-output",i:"←",v:"'bar'"}],
+      [{t:"d-transform",i:"⇒",v:"[K in Keys as `on${Capitalize<K>}`]"},{t:"log-orange",i:"!",v:"{onName:()=>void, onAge:()=>void}"}],
+      [{t:"d-transform",i:"⇒",v:"e = {onName:()=>{}, onAge:()=>{}}"},{t:"log-green",i:"✓",v:"EventMap satisfied ✓"}],
+    ],
+    mem:[
+      {g:[{k:"U",v:"'HELLO'",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"U",v:"'HELLO'"},{k:"L",v:"'world'",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Cap",v:"'Foo'",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Uncap",v:"'bar'",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"EventMap",v:"{onName,onAge}",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"e",v:"EventMap ✓",s:"mv-new"}],l:[],c:[{k:"e.onName",v:"()=>void"},{k:"e.onAge",v:"()=>void"}]},
+    ],
+  }],
+},{
+  num:19,title:"Utility Types",tag:"Partial, Omit, Pick, Record...",
+  concept:"TypeScript ships with a library of <strong>built-in generic utility types</strong> that perform common type transformations. Key ones: <code>Partial&lt;T&gt;</code> makes all properties optional; <code>Required&lt;T&gt;</code> makes all required; <code>Pick&lt;T,K&gt;</code> selects keys; <code>Omit&lt;T,K&gt;</code> removes keys; <code>Record&lt;K,V&gt;</code> maps keys to values; <code>Extract</code>/<code>Exclude</code> filter union members; <code>ReturnType</code>/<code>Parameters</code> extract function type info.",
+  callout:{type:"callout-purple",text:"All built-in utility types are implemented using mapped types and conditional types — studying them teaches you how to build your own custom utility types."},
+  refs:[{lbl:"Utility Types",cls:"",title:"Utility Types Reference",sub:"typescriptlang.org"},{lbl:"Record",cls:"",title:"Record<K,V>",sub:"typescriptlang.org"}],
+  memPanelTitle:"Type environment",
+  legend:[{color:"var(--purple)",label:"utility type"},{color:"var(--green)",label:"result type"},{color:"var(--orange)",label:"partial/required"},{color:"var(--red)",label:"type error"}],
+  examples:[{
+    name:"Partial, Required, Pick, Omit",
+    desc:"These four utilities cover the most common property-level transformations. <code>Partial</code> and <code>Required</code> toggle optionality; <code>Pick</code> and <code>Omit</code> select or exclude properties by key.",
+    code:`<span class="kw">interface</span> <span id="gc0">User</span> { id: <span class="kw">number</span>; name: <span class="kw">string</span>; email: <span class="kw">string</span> }
+<span class="kw">type</span> <span id="gc1">PUser</span> = Partial&lt;User&gt;;        <span class="cm">// all optional</span>
+<span class="kw">type</span> <span id="gc2">Picked</span> = Pick&lt;User, <span class="str">"id"</span>|<span class="str">"name"</span>&gt;;  <span class="cm">// {id,name}</span>
+<span class="kw">type</span> <span id="gc3">Omitted</span> = Omit&lt;User, <span class="str">"email"</span>&gt;;  <span class="cm">// {id,name}</span>
+<span class="kw">const</span> <span id="gc4">patch</span>: PUser = { name: <span class="str">"Bob"</span> };   <span class="cm">// id,email optional ✓</span>
+<span class="kw">const</span> <span id="gc5">p</span>: Picked = { id: 1, name: <span class="str">"Al"</span> }; <span class="cm">// email not needed ✓</span>`,
+    steps:[
+      "User interface — id, name, email all required",
+      "PUser = Partial<User> — every property becomes optional",
+      "Picked = Pick<User,'id'|'name'> — only id and name kept",
+      "Omitted = Omit<User,'email'> — email removed, id and name remain",
+      "patch: PUser — only name provided; id and email are optional ✓",
+      "p: Picked — only needs id and name; email is not in the type ✓",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"User: id,name,email",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"PUser: all optional",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"Picked: {id,name}",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"Omitted: {id,name}",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"patch: PUser ✓",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"p: Picked ✓",t:"f-active"}],
+    ],
+    flow:[
+      [{t:"d-input",i:"→",v:"User: {id:num, name:str, email:str}"}],
+      [{t:"d-transform",i:"⇒",v:"Partial<User>: all props get ?"},{t:"log-orange",i:"!",v:"{id?:num, name?:str, email?:str}"}],
+      [{t:"d-transform",i:"⇒",v:"Pick<User,'id'|'name'>: keep only those"},{t:"log-green",i:"✓",v:"{id:num, name:str}"}],
+      [{t:"d-transform",i:"⇒",v:"Omit<User,'email'>: remove email"},{t:"log-green",i:"✓",v:"{id:num, name:str}"}],
+      [{t:"d-transform",i:"⇒",v:"patch={name:'Bob'}"},{t:"log-green",i:"✓",v:"PUser: id,email optional ✓"}],
+      [{t:"d-transform",i:"⇒",v:"p={id:1,name:'Al'}"},{t:"log-green",i:"✓",v:"Picked satisfied ✓"}],
+    ],
+    mem:[
+      {g:[{k:"User",v:"{id,name,email}",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"PUser",v:"Partial<User>",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Picked",v:"{id,name}",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Omitted",v:"{id,name}",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"patch",v:"PUser ✓",s:"mv-new"}],l:[],c:[{k:"patch.name",v:"'Bob'"},{k:"patch.id",v:"undefined (opt)"}]},
+      {g:[{k:"p",v:"Picked ✓",s:"mv-new"}],l:[],c:[{k:"p.id",v:"1"},{k:"p.name",v:"'Al'"}]},
+    ],
+  },{
+    name:"Record, Extract, Exclude, ReturnType",
+    desc:"<code>Record&lt;K,V&gt;</code> builds an object type from key union K to value V. <code>Extract</code>/<code>Exclude</code> filter union members. <code>ReturnType&lt;F&gt;</code> and <code>Parameters&lt;F&gt;</code> extract the return type and parameter tuple type of a function.",
+    code:`<span class="kw">type</span> <span id="gc0">Scores</span> = Record&lt;<span class="str">"math"</span>|<span class="str">"sci"</span>, <span class="kw">number</span>&gt;;
+<span class="cm">// { math: number; sci: number }</span>
+<span class="kw">type</span> <span id="gc1">OnlyStr</span> = Extract&lt;<span class="kw">string</span>|<span class="kw">number</span>|<span class="kw">boolean</span>, <span class="kw">string</span>&gt;; <span class="cm">// string</span>
+<span class="kw">type</span> <span id="gc2">NoStr</span>  = Exclude&lt;<span class="kw">string</span>|<span class="kw">number</span>|<span class="kw">boolean</span>, <span class="kw">string</span>&gt;; <span class="cm">// number|boolean</span>
+<span class="kw">function</span> <span class="fn"><span id="gc3">add</span></span>(a: <span class="kw">number</span>, b: <span class="kw">number</span>): <span class="kw">number</span> { <span class="kw">return</span> a+b; }
+<span class="kw">type</span> <span id="gc4">Ret</span>    = ReturnType&lt;<span class="kw">typeof</span> <span class="fn">add</span>&gt;;   <span class="cm">// number</span>
+<span class="kw">type</span> <span id="gc5">Params</span> = Parameters&lt;<span class="kw">typeof</span> <span class="fn">add</span>&gt;;  <span class="cm">// [number, number]</span>`,
+    steps:[
+      "Scores = Record<'math'|'sci', number> — object with those exact keys",
+      "OnlyStr = Extract<str|num|bool, string> — keep only string members",
+      "NoStr = Exclude<str|num|bool, string> — remove string members",
+      "add(a,b): number — a function to introspect",
+      "Ret = ReturnType<typeof add> — extracts return type: number",
+      "Params = Parameters<typeof add> — extracts param tuple: [number,number]",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"Scores: Record type",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"OnlyStr: Extract",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"NoStr: Exclude",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"add: (num,num)=>num",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"Ret: ReturnType",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"Params: Parameters",t:"f-cb"}],
+    ],
+    flow:[
+      [{t:"d-transform",i:"⇒",v:"Record<'math'|'sci',number>"},{t:"d-output",i:"←",v:"{math:number, sci:number}"}],
+      [{t:"d-transform",i:"⇒",v:"Extract: keep members assignable to string"},{t:"log-green",i:"✓",v:"OnlyStr = string"}],
+      [{t:"d-transform",i:"⇒",v:"Exclude: remove members assignable to string"},{t:"log-green",i:"✓",v:"NoStr = number|boolean"}],
+      [{t:"d-input",i:"→",v:"add: (a:number, b:number) => number"}],
+      [{t:"d-transform",i:"⇒",v:"ReturnType<typeof add>"},{t:"d-output",i:"←",v:"Ret = number"}],
+      [{t:"d-transform",i:"⇒",v:"Parameters<typeof add>"},{t:"d-output",i:"←",v:"Params = [number, number]"}],
+    ],
+    mem:[
+      {g:[{k:"Scores",v:"{math:num,sci:num}",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"OnlyStr",v:"string",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"NoStr",v:"number|boolean",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"add",v:"(num,num)=>num",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Ret",v:"number",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Params",v:"[number,number]",s:"mv-new"}],l:[],c:[]},
+    ],
+  }],
+},{
+  num:20,title:"Index Signatures",tag:"[key: string]: Type",
+  concept:"<strong>Index signatures</strong> allow an object type to have an arbitrary number of properties of a given key type. The syntax <code>[key: string]: ValueType</code> means: any string key maps to ValueType. Numeric index signatures use <code>[key: number]</code>. Index signatures and named properties must be compatible.",
+  callout:{type:"callout-green",text:"If you have both named properties and an index signature, every named property's type must be assignable to the index signature's value type."},
+  refs:[{lbl:"Index Signatures",cls:"",title:"Index Signatures",sub:"typescriptlang.org"},{lbl:"Readonly Index",cls:"",title:"Readonly index signature",sub:"typescriptlang.org"}],
+  memPanelTitle:"Type environment",
+  legend:[{color:"var(--purple)",label:"index signature"},{color:"var(--green)",label:"valid access"},{color:"var(--orange)",label:"type widening"},{color:"var(--red)",label:"type error"}],
+  examples:[{
+    name:"String index signature",
+    desc:"A string index signature lets you add any string key to an object. TypeScript infers <code>undefined</code> as a possible value for any access (key might not exist), unless you use <code>noUncheckedIndexedAccess</code>.",
+    code:`<span class="kw">interface</span> <span id="gc0">Dict</span> {
+  [key: <span class="kw">string</span>]: <span class="kw">number</span>;
+}
+<span class="kw">const</span> <span id="gc1">d</span>: Dict = { a: 1, b: 2 };
+<span id="gc2">d.a</span>;          <span class="cm">// number ✓</span>
+<span id="gc3">d</span>[<span class="str">"c"</span>] = 3;    <span class="cm">// ✓ — any string key allowed</span>
+<span class="kw">interface</span> <span id="gc4">Mixed</span> {
+  count: <span class="kw">number</span>;  <span class="cm">// named must match index value type</span>
+  [key: <span class="kw">string</span>]: <span class="kw">number</span>;
+}
+<span class="kw">const</span> <span id="gc5">m</span>: Mixed = { count: 0, extra: 99 };`,
+    steps:[
+      "Dict — index signature: any string key maps to number",
+      "d: Dict — {a:1, b:2} satisfies the index signature ✓",
+      "d.a — accesses 'a': type is number ✓",
+      "d['c'] = 3 — adding new key 'c' is allowed by index signature ✓",
+      "Mixed — named property 'count' and index sig must share value type",
+      "m: Mixed — count:0 satisfies named, extra:99 satisfies index ✓",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"Dict: [str]:number",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"d: Dict ✓",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"d.a: number ✓",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"d['c']=3 ✓",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"Mixed: named+index",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"m: Mixed ✓",t:"f-active"}],
+    ],
+    flow:[
+      [{t:"d-input",i:"→",v:"[key: string]: number — any str key"},{t:"log-purple",i:"!",v:"open-ended property bag"}],
+      [{t:"d-transform",i:"⇒",v:"d = {a:1, b:2}"},{t:"log-green",i:"✓",v:"all values are number ✓"}],
+      [{t:"d-output",i:"←",v:"d.a: number"},{t:"log-green",i:"✓",v:"index returns number ✓"}],
+      [{t:"d-transform",i:"⇒",v:"d['c'] = 3"},{t:"log-green",i:"✓",v:"new key allowed ✓"}],
+      [{t:"d-input",i:"→",v:"Mixed: count must be number (matches index)"},{t:"log-orange",i:"!",v:"named props must fit index value type"}],
+      [{t:"d-transform",i:"⇒",v:"m = {count:0, extra:99}"},{t:"log-green",i:"✓",v:"Mixed satisfied ✓"}],
+    ],
+    mem:[
+      {g:[{k:"Dict",v:"[str]:number",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"d",v:"Dict: {a:1,b:2}",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"d",v:"Dict"}],l:[],c:[{k:"d.a",v:"1 (number) ✓",s:"mv-changed"}]},
+      {g:[{k:"d",v:"Dict"}],l:[],c:[{k:"d.c",v:"3 (added) ✓",s:"mv-new"}]},
+      {g:[{k:"Mixed",v:"count+[str]:num",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"m",v:"Mixed ✓",s:"mv-new"}],l:[],c:[{k:"m.count",v:"0"},{k:"m.extra",v:"99"}]},
+    ],
+  },{
+    name:"Numeric index and readonly index",
+    desc:"Numeric index signatures are used for array-like types. A <code>readonly</code> index signature prevents mutation of indexed properties. Numeric index value types must be a subtype of the string index value type (if both exist).",
+    code:`<span class="kw">interface</span> <span id="gc0">NumDict</span> {
+  [i: <span class="kw">number</span>]: <span class="kw">string</span>;
+}
+<span class="kw">const</span> <span id="gc1">nd</span>: NumDict = [<span class="str">"a"</span>, <span class="str">"b"</span>]; <span class="cm">// array satisfies ✓</span>
+<span id="gc2">nd</span>[0];   <span class="cm">// "a" — string ✓</span>
+<span class="kw">interface</span> <span id="gc3">ReadonlyDict</span> {
+  <span class="kw">readonly</span> [key: <span class="kw">string</span>]: <span class="kw">number</span>;
+}
+<span class="kw">const</span> <span id="gc4">rd</span>: ReadonlyDict = { x: 10 };
+<span id="gc5">rd</span>[<span class="str">"x"</span>] = 99; <span class="cm">// ✗ readonly index</span>`,
+    steps:[
+      "NumDict — numeric index: number key maps to string",
+      "nd: NumDict — array ['a','b'] satisfies numeric index ✓",
+      "nd[0] — accesses index 0: type is string ✓",
+      "ReadonlyDict — readonly index: cannot write to any string key",
+      "rd: ReadonlyDict — {x:10} satisfies readonly index ✓",
+      "rd['x'] = 99 — ERROR: index signature is readonly ✗",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"NumDict: [num]:str",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"nd: NumDict ✓",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"nd[0]: string ✓",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"ReadonlyDict: rdonly",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"rd: ReadonlyDict ✓",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"ERROR: rd write ✗",t:"f-special"}],
+    ],
+    flow:[
+      [{t:"d-input",i:"→",v:"[i: number]: string — numeric index"},{t:"log-purple",i:"!",v:"array-like structure"}],
+      [{t:"d-transform",i:"⇒",v:"nd = ['a','b']"},{t:"log-green",i:"✓",v:"array is assignable to NumDict ✓"}],
+      [{t:"d-output",i:"←",v:"nd[0]: string"},{t:"log-green",i:"✓",v:"numeric access returns string ✓"}],
+      [{t:"d-input",i:"→",v:"readonly [key: string]: number"},{t:"log-orange",i:"!",v:"no writes to any key"}],
+      [{t:"d-transform",i:"⇒",v:"rd = {x:10}"},{t:"log-green",i:"✓",v:"read-only index satisfied ✓"}],
+      [{t:"d-special",i:"!",v:"rd['x'] = 99"},{t:"log-red",i:"✗",v:"Index signature is readonly — cannot assign"}],
+    ],
+    mem:[
+      {g:[{k:"NumDict",v:"[num]:string",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"nd",v:"NumDict: ['a','b']",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"nd",v:"NumDict"}],l:[],c:[{k:"nd[0]",v:"'a' (string) ✓",s:"mv-changed"}]},
+      {g:[{k:"ReadonlyDict",v:"rdonly [str]:num",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"rd",v:"ReadonlyDict ✓",s:"mv-new"}],l:[],c:[{k:"rd.x",v:"10 (readonly)"}]},
+      {g:[{k:"rd",v:"ReadonlyDict"}],l:[],c:[{k:"rd['x']=99",v:"✗ readonly",s:"mv-special"}]},
+    ],
+  }],
+},{
+  num:21,title:"keyof & typeof Operators",tag:"keyof T, typeof var",
+  concept:"<code>keyof T</code> produces a union of all property key types of T. <code>typeof</code> in type position extracts the TypeScript type of a variable or expression — not the JavaScript runtime value. Together they enable powerful patterns like <code>keyof typeof obj</code> to get the union of an object's keys.",
+  callout:{type:"callout-purple",text:"keyof typeof obj is the idiomatic way to get a union of string literal types from a plain JavaScript object — useful as a safer alternative to enum."},
+  refs:[{lbl:"keyof",cls:"",title:"keyof type operator",sub:"typescriptlang.org"},{lbl:"typeof",cls:"",title:"typeof type operator",sub:"typescriptlang.org"}],
+  memPanelTitle:"Type environment",
+  legend:[{color:"var(--purple)",label:"keyof/typeof"},{color:"var(--green)",label:"result type"},{color:"var(--orange)",label:"key access"},{color:"var(--red)",label:"type error"}],
+  examples:[{
+    name:"keyof with interfaces",
+    desc:"<code>keyof T</code> produces a union of all known key names of T as string literal types. You can use it to constrain a parameter to valid property keys and safely access those properties.",
+    code:`<span class="kw">interface</span> <span id="gc0">Car</span> { make: <span class="kw">string</span>; year: <span class="kw">number</span>; ev: <span class="kw">boolean</span> }
+<span class="kw">type</span> <span id="gc1">CarKey</span> = <span class="kw">keyof</span> Car; <span class="cm">// "make" | "year" | "ev"</span>
+<span class="kw">function</span> <span class="fn"><span id="gc2">get</span></span>&lt;T, K <span class="kw">extends</span> <span class="kw">keyof</span> T&gt;(obj: T, key: K): T[K] {
+  <span class="kw">return</span> obj[key];
+}
+<span class="kw">const</span> car: Car = { make: <span class="str">"Toyota"</span>, year: 2023, ev: <span class="kw">false</span> };
+<span id="gc3"><span class="fn">get</span></span>(car, <span class="str">"make"</span>);   <span class="cm">// string ✓</span>
+<span id="gc4"><span class="fn">get</span></span>(car, <span class="str">"year"</span>);   <span class="cm">// number ✓</span>
+<span class="fn">get</span>(car, <span id="gc5"><span class="str">"color"</span></span>); <span class="cm">// ✗ not a key of Car</span>`,
+    steps:[
+      "Car interface — keys: make(string), year(number), ev(boolean)",
+      "CarKey = keyof Car — 'make'|'year'|'ev' string literal union",
+      "get<T,K extends keyof T>(obj,key): T[K] — type-safe property getter",
+      "get(car,'make') — K='make', return T[K]=string ✓",
+      "get(car,'year') — K='year', return T[K]=number ✓",
+      "get(car,'color') — ERROR: 'color' not in keyof Car ✗",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"Car: make,year,ev",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"CarKey: key union",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"get<T,K>: safe access",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"get(car,'make')→str",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"get(car,'year')→num",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"ERROR: 'color' ✗",t:"f-special"}],
+    ],
+    flow:[
+      [{t:"d-input",i:"→",v:"Car: {make:str, year:num, ev:bool}"}],
+      [{t:"d-transform",i:"⇒",v:"keyof Car"},{t:"d-output",i:"←",v:"'make'|'year'|'ev'"}],
+      [{t:"d-transform",i:"⇒",v:"K extends keyof T → T[K] return type"},{t:"log-purple",i:"!",v:"type-safe indexed access"}],
+      [{t:"d-output",i:"←",v:"get(car,'make') → string"},{t:"log-green",i:"✓",v:"T['make'] = string ✓"}],
+      [{t:"d-output",i:"←",v:"get(car,'year') → number"},{t:"log-green",i:"✓",v:"T['year'] = number ✓"}],
+      [{t:"d-special",i:"!",v:"'color' not in keyof Car"},{t:"log-red",i:"✗",v:"Argument of type '\"color\"' is not assignable"}],
+    ],
+    mem:[
+      {g:[{k:"Car",v:"{make,year,ev}",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"CarKey",v:"'make'|'year'|'ev'",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"get",v:"<T,K extends keyof T>",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"car",v:"Car obj"}],l:[],c:[{k:"get(car,'make')",v:"string ✓",s:"mv-changed"}]},
+      {g:[{k:"car",v:"Car obj"}],l:[],c:[{k:"get(car,'year')",v:"number ✓",s:"mv-changed"}]},
+      {g:[{k:"car",v:"Car obj"}],l:[],c:[{k:"get(car,'color')",v:"✗ invalid key",s:"mv-special"}]},
+    ],
+  },{
+    name:"typeof in type position",
+    desc:"<code>typeof</code> in a type annotation refers to the <em>TypeScript type</em> of a value. Combined with <code>keyof</code>, <code>keyof typeof obj</code> extracts the keys of a runtime object as a literal union type.",
+    code:`<span class="kw">const</span> <span id="gc0">palette</span> = {
+  red:   <span class="str">"#E00"</span>,
+  green: <span class="str">"#0E0"</span>,
+  blue:  <span class="str">"#00E"</span>,
+};
+<span class="kw">type</span> <span id="gc1">Color</span> = <span class="kw">keyof</span> <span class="kw">typeof</span> palette;
+<span class="cm">// "red" | "green" | "blue"</span>
+<span class="kw">function</span> <span class="fn"><span id="gc2">pick</span></span>(c: Color): <span class="kw">string</span> {
+  <span class="kw">return</span> palette[c];
+}
+<span id="gc3"><span class="fn">pick</span></span>(<span class="str">"red"</span>);    <span class="cm">// ✓</span>
+<span class="fn">pick</span>(<span id="gc4"><span class="str">"yellow"</span></span>); <span class="cm">// ✗</span>
+<span class="kw">type</span> <span id="gc5">PaletteType</span> = <span class="kw">typeof</span> palette;
+<span class="cm">// {red:string; green:string; blue:string}</span>`,
+    steps:[
+      "palette — runtime object with three color keys",
+      "Color = keyof typeof palette — extracts 'red'|'green'|'blue'",
+      "pick(c: Color) — only accepts valid palette keys",
+      "pick('red') — 'red' is in Color; returns palette.red ✓",
+      "pick('yellow') — ERROR: 'yellow' not in Color ✗",
+      "PaletteType = typeof palette — captures the full object type",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"palette: {r,g,b}",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"Color: key union",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"pick(c: Color)",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"pick('red') ✓",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"ERROR: 'yellow' ✗",t:"f-special"}],
+      [{l:"module()",t:"f-global"},{l:"PaletteType: full type",t:"f-cb"}],
+    ],
+    flow:[
+      [{t:"d-input",i:"→",v:"palette: {red:'#E00', green:'#0E0', blue:'#00E'}"}],
+      [{t:"d-transform",i:"⇒",v:"keyof typeof palette"},{t:"d-output",i:"←",v:"'red'|'green'|'blue'"}],
+      [{t:"d-transform",i:"⇒",v:"pick(c: Color): palette[c]"},{t:"log-purple",i:"!",v:"safe key-constrained access"}],
+      [{t:"d-output",i:"←",v:"pick('red') → '#E00'"},{t:"log-green",i:"✓",v:"valid key ✓"}],
+      [{t:"d-special",i:"!",v:"pick('yellow')"},{t:"log-red",i:"✗",v:"'yellow' not assignable to Color"}],
+      [{t:"d-transform",i:"⇒",v:"typeof palette"},{t:"d-output",i:"←",v:"{red:string,green:string,blue:string}"}],
+    ],
+    mem:[
+      {g:[{k:"palette",v:"{red,green,blue}",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Color",v:"'red'|'green'|'blue'",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"pick",v:"(c:Color)=>string",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"pick",v:"(c:Color)=>string"}],l:[],c:[{k:"pick('red')",v:"'#E00' ✓",s:"mv-changed"}]},
+      {g:[{k:"pick",v:"(c:Color)=>string"}],l:[],c:[{k:"pick('yellow')",v:"✗ invalid",s:"mv-special"}]},
+      {g:[{k:"PaletteType",v:"{red,green,blue}:str",s:"mv-new"}],l:[],c:[]},
+    ],
+  }],
+},{
+  num:22,title:"Declaration Merging",tag:"interface merging, augmentation",
+  concept:"TypeScript allows multiple declarations of the same <strong>interface</strong> to be automatically merged into one. You can also augment <strong>modules</strong> and <strong>namespaces</strong>. This is how library typings add methods to built-in types like <code>Array</code> or how you extend third-party module types.",
+  callout:{type:"callout-orange",text:"Declaration merging only works with interfaces, not type aliases. This is one of the key differences between interface and type — interfaces are open, types are closed."},
+  refs:[{lbl:"Declaration Merging",cls:"",title:"Declaration Merging",sub:"typescriptlang.org"},{lbl:"Module Augmentation",cls:"",title:"Module augmentation",sub:"typescriptlang.org"}],
+  memPanelTitle:"Type environment",
+  legend:[{color:"var(--purple)",label:"merged declaration"},{color:"var(--green)",label:"merged result"},{color:"var(--orange)",label:"augmentation"},{color:"var(--red)",label:"conflict error"}],
+  examples:[{
+    name:"Interface merging",
+    desc:"Declaring the same interface name twice in the same scope causes TypeScript to merge both declarations into a single interface with all properties from both declarations. This is useful for gradually building up types.",
+    code:`<span class="kw">interface</span> <span id="gc0">Plugin</span> { name: <span class="kw">string</span> }
+<span class="kw">interface</span> <span id="gc1">Plugin</span> { version: <span class="kw">string</span> }
+<span class="cm">// Merged: { name: string; version: string }</span>
+<span class="kw">const</span> <span id="gc2">p</span>: Plugin = { name: <span class="str">"auth"</span>, version: <span class="str">"1.0"</span> };
+<span class="kw">interface</span> <span id="gc3">Window</span> { myApp: <span class="kw">string</span> } <span class="cm">// augment built-in</span>
+<span class="kw">interface</span> <span id="gc4">Array</span>&lt;T&gt; { <span class="fn">first</span>(): T | <span class="kw">undefined</span> }
+Array.prototype.<span class="fn">first</span> = <span class="kw">function</span>() { <span class="kw">return</span> <span class="kw">this</span>[0]; };
+<span id="gc5">[1,2,3]</span>.<span class="fn">first</span>(); <span class="cm">// 1 — augmented Array ✓</span>`,
+    steps:[
+      "Plugin declared with name:string",
+      "Plugin declared again with version:string — will be merged",
+      "p: Plugin — must have both name and version (merged) ✓",
+      "Window augmented — adds myApp property to global Window type",
+      "Array<T> augmented — adds first() method to all arrays",
+      "[1,2,3].first() — calls augmented method → 1 ✓",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"Plugin: {name}",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"Plugin+version merged",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"p: Plugin (merged) ✓",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"Window augmented",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"Array<T> augmented",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"[1,2,3].first()→1 ✓",t:"f-active"}],
+    ],
+    flow:[
+      [{t:"d-input",i:"→",v:"Plugin: {name:string}"}],
+      [{t:"d-transform",i:"⇒",v:"merge Plugin declarations"},{t:"d-output",i:"←",v:"{name:string, version:string}"}],
+      [{t:"d-transform",i:"⇒",v:"p = {name:'auth', version:'1.0'}"},{t:"log-green",i:"✓",v:"merged interface satisfied ✓"}],
+      [{t:"d-transform",i:"⇒",v:"Window += {myApp:string}"},{t:"log-orange",i:"!",v:"global Window extended"}],
+      [{t:"d-transform",i:"⇒",v:"Array<T> += {first():T|undefined}"},{t:"log-orange",i:"!",v:"all arrays gain first()"}],
+      [{t:"d-output",i:"←",v:"[1,2,3].first() = 1"},{t:"log-green",i:"✓",v:"augmented method works ✓"}],
+    ],
+    mem:[
+      {g:[{k:"Plugin",v:"{name:str}",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Plugin",v:"{name:str, version:str}",s:"mv-changed"}],l:[],c:[]},
+      {g:[{k:"p",v:"Plugin ✓",s:"mv-new"}],l:[],c:[{k:"p.name",v:"'auth'"},{k:"p.version",v:"'1.0'"}]},
+      {g:[{k:"Window",v:"+myApp:string",s:"mv-changed"}],l:[],c:[]},
+      {g:[{k:"Array<T>",v:"+first():T|undef",s:"mv-changed"}],l:[],c:[]},
+      {g:[{k:"[1,2,3]",v:"number[]"}],l:[],c:[{k:".first()",v:"1 ✓",s:"mv-new"}]},
+    ],
+  },{
+    name:"Namespace merging & module augmentation",
+    desc:"Namespaces can merge with functions and classes to add static properties. Module augmentation lets you add types to third-party modules by declaring <code>module 'lib'</code> inside a regular TS file.",
+    code:`<span class="kw">function</span> <span class="fn"><span id="gc0">validate</span></span>(s: <span class="kw">string</span>): <span class="kw">boolean</span> { <span class="kw">return</span> s.length &gt; 0; }
+<span class="kw">namespace</span> <span id="gc1">validate</span> {
+  <span class="kw">export const</span> MIN = 1;
+}
+<span id="gc2">validate</span>(<span class="str">"hi"</span>);      <span class="cm">// true — calls function ✓</span>
+<span id="gc3">validate.MIN</span>;       <span class="cm">// 1 — namespace property ✓</span>
+<span class="cm">// Module augmentation pattern:</span>
+<span class="kw">declare module</span> <span id="gc4"><span class="str">"./lib"</span></span> {
+  <span class="kw">interface</span> Options { timeout: <span class="kw">number</span> }
+}
+<span class="cm">// Now Options in "./lib" includes timeout ✓</span>
+<span id="gc5"><span class="cm">// import {Options} from './lib' → has timeout ✓</span></span>`,
+    steps:[
+      "validate function — takes string, returns boolean",
+      "namespace validate — merges with function; adds MIN static property",
+      "validate('hi') — calls the function; returns true ✓",
+      "validate.MIN — accesses namespace-merged static property → 1 ✓",
+      "declare module './lib' — augments an external module's types",
+      "Options in './lib' gains timeout property via augmentation ✓",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"validate: fn",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"validate ns merged",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"validate('hi')→true",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"validate.MIN→1 ✓",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"module augmentation",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"Options+timeout ✓",t:"f-cb"}],
+    ],
+    flow:[
+      [{t:"d-input",i:"→",v:"validate: (s:string) => boolean"}],
+      [{t:"d-transform",i:"⇒",v:"namespace merge: validate.MIN=1"},{t:"log-orange",i:"!",v:"fn+namespace coexist"}],
+      [{t:"d-output",i:"←",v:"validate('hi') → true"},{t:"log-green",i:"✓",v:"function call ✓"}],
+      [{t:"d-output",i:"←",v:"validate.MIN → 1"},{t:"log-green",i:"✓",v:"static namespace member ✓"}],
+      [{t:"d-transform",i:"⇒",v:"declare module './lib'"},{t:"log-orange",i:"!",v:"add types to external module"}],
+      [{t:"d-output",i:"←",v:"Options in './lib' += timeout:number"},{t:"log-green",i:"✓",v:"augmentation applied ✓"}],
+    ],
+    mem:[
+      {g:[{k:"validate",v:"fn: (str)=>bool",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"validate",v:"fn + namespace",s:"mv-changed"},{k:"validate.MIN",v:"1",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"validate",v:"fn + ns"}],l:[],c:[{k:"validate('hi')",v:"true ✓",s:"mv-changed"}]},
+      {g:[{k:"validate.MIN",v:"1"}],l:[],c:[{k:"access",v:"1 ✓",s:"mv-changed"}]},
+      {g:[{k:"module './lib'",v:"augmented",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Options",v:"+timeout:number",s:"mv-changed"}],l:[],c:[]},
+    ],
+  }],
+},{
+  num:23,title:"Type Predicates & Assertion Functions",tag:"is keyword, asserts keyword",
+  concept:"A <strong>type predicate</strong> is a return type of the form <code>paramName is Type</code> — it tells TypeScript that if the function returns true, the parameter is narrowed to that type. An <strong>assertion function</strong> uses <code>asserts condition</code> or <code>asserts param is Type</code> to signal that if the function returns normally, the condition holds.",
+  callout:{type:"callout-green",text:"Type predicates are how you tell TypeScript about your custom runtime type checks. Without them, TypeScript cannot narrow types through your own guard functions."},
+  refs:[{lbl:"Type Predicates",cls:"",title:"Using type predicates",sub:"typescriptlang.org"},{lbl:"Assertion Functions",cls:"",title:"Assertion functions",sub:"typescriptlang.org"}],
+  memPanelTitle:"Type environment",
+  legend:[{color:"var(--purple)",label:"type predicate"},{color:"var(--green)",label:"narrowed type"},{color:"var(--orange)",label:"assertion"},{color:"var(--red)",label:"type error"}],
+  examples:[{
+    name:"Type predicates with is",
+    desc:"A function returning <code>x is string</code> acts as a type guard. When the function returns true in an if-branch, TypeScript narrows the type of x to string inside that branch.",
+    code:`<span class="kw">function</span> <span class="fn"><span id="gc0">isString</span></span>(x: <span class="kw">unknown</span>): x <span class="kw">is</span> <span class="kw">string</span> {
+  <span class="kw">return</span> <span class="kw">typeof</span> x === <span class="str">"string"</span>;
+}
+<span class="kw">function</span> <span class="fn"><span id="gc1">process</span></span>(val: <span class="kw">string</span> | <span class="kw">number</span>) {
+  <span class="kw">if</span> (<span class="fn">isString</span>(<span id="gc2">val</span>)) {
+    <span id="gc3">val</span>.<span class="fn">toUpperCase</span>(); <span class="cm">// val is string ✓</span>
+  } <span class="kw">else</span> {
+    <span id="gc4">val</span>.<span class="fn">toFixed</span>(2);    <span class="cm">// val is number ✓</span>
+  }
+}
+<span class="kw">const</span> items: <span class="kw">unknown</span>[] = [<span class="str">"a"</span>, 1, <span class="str">"b"</span>];
+<span id="gc5">items.filter(isString)</span>; <span class="cm">// string[] ✓</span>`,
+    steps:[
+      "isString(x): x is string — custom type guard predicate",
+      "process(val: string|number) — union type parameter",
+      "isString(val) — if true, TypeScript narrows val to string",
+      "val.toUpperCase() — inside true branch: val is string ✓",
+      "val.toFixed(2) — inside else branch: val is number ✓",
+      "items.filter(isString) — filter result typed as string[] ✓",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"isString: type guard",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"process: str|num",t:"f-hof"}],
+      [{l:"process()",t:"f-active"},{l:"isString(val)→?",t:"f-cb"}],
+      [{l:"process()",t:"f-active"},{l:"val: string (true branch)",t:"f-cb"}],
+      [{l:"process()",t:"f-active"},{l:"val: number (else)",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"filter→string[] ✓",t:"f-active"}],
+    ],
+    flow:[
+      [{t:"d-transform",i:"⇒",v:"x is string — type predicate return"},{t:"log-purple",i:"!",v:"narrows in true branch"}],
+      [{t:"d-input",i:"→",v:"val: string | number"}],
+      [{t:"d-transform",i:"⇒",v:"if(isString(val)) → val is string"},{t:"log-purple",i:"!",v:"TypeScript trusts the predicate"}],
+      [{t:"d-output",i:"←",v:"val: string in true branch"},{t:"log-green",i:"✓",v:"toUpperCase() available ✓"}],
+      [{t:"d-output",i:"←",v:"val: number in else branch"},{t:"log-green",i:"✓",v:"toFixed() available ✓"}],
+      [{t:"d-transform",i:"⇒",v:"filter(isString)"},{t:"d-output",i:"←",v:"string[] (predicate drives inference) ✓"}],
+    ],
+    mem:[
+      {g:[{k:"isString",v:"(x:unknown): x is str",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"process",v:"(val:str|num)=>void",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"val",v:"string|number"}],l:[],c:[{k:"isString(val)",v:"?",s:"mv-changed"}]},
+      {g:[{k:"val",v:"string (narrowed)",s:"mv-changed"}],l:[],c:[{k:"toUpperCase()",v:"✓"}]},
+      {g:[{k:"val",v:"number (narrowed)",s:"mv-changed"}],l:[],c:[{k:"toFixed(2)",v:"✓"}]},
+      {g:[{k:"items.filter",v:"→string[]",s:"mv-new"}],l:[],c:[]},
+    ],
+  },{
+    name:"Assertion functions with asserts",
+    desc:"An assertion function uses <code>asserts x is Type</code> or <code>asserts condition</code> as its return type. When it returns normally (without throwing), TypeScript narrows the type after the call.",
+    code:`<span class="kw">function</span> <span class="fn"><span id="gc0">assertString</span></span>(x: <span class="kw">unknown</span>): <span class="kw">asserts</span> x <span class="kw">is</span> <span class="kw">string</span> {
+  <span class="kw">if</span> (<span class="kw">typeof</span> x !== <span class="str">"string"</span>) <span class="kw">throw new</span> Error(<span class="str">"not a string"</span>);
+}
+<span class="kw">function</span> <span class="fn"><span id="gc1">assertDefined</span></span>&lt;T&gt;(v: T | <span class="kw">null</span>): <span class="kw">asserts</span> v <span class="kw">is</span> T {
+  <span class="kw">if</span> (v === <span class="kw">null</span>) <span class="kw">throw new</span> Error(<span class="str">"null"</span>);
+}
+<span class="kw">let</span> <span id="gc2">val</span>: <span class="kw">unknown</span> = <span class="str">"hello"</span>;
+<span class="fn"><span id="gc3">assertString</span></span>(val);
+<span id="gc4">val</span>.<span class="fn">toUpperCase</span>(); <span class="cm">// val is string after assert ✓</span>
+<span class="kw">let</span> <span id="gc5">n</span>: <span class="kw">number</span> | <span class="kw">null</span> = 42;
+<span class="fn">assertDefined</span>(n); <span class="cm">// n: number after assert ✓</span>`,
+    steps:[
+      "assertString(x): asserts x is string — throws if x is not a string",
+      "assertDefined<T>(v): asserts v is T — throws if v is null",
+      "val: unknown = 'hello' — unknown type, can't call methods yet",
+      "assertString(val) — if returns normally, val is narrowed to string",
+      "val.toUpperCase() — val is now string after assertion ✓",
+      "assertDefined(n) — n: number|null narrowed to number after call ✓",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"assertString: asserts",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"assertDefined<T>: asserts",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"val: unknown",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"assertString(val)→narrows",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"val: string ✓",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"n: number ✓",t:"f-cb"}],
+    ],
+    flow:[
+      [{t:"d-transform",i:"⇒",v:"asserts x is string — post-call narrowing"},{t:"log-purple",i:"!",v:"throws on failure"}],
+      [{t:"d-transform",i:"⇒",v:"asserts v is T — generic assertion"},{t:"log-purple",i:"!",v:"removes null from type"}],
+      [{t:"d-input",i:"→",v:"val: unknown — no methods available yet"}],
+      [{t:"d-transform",i:"⇒",v:"assertString(val) returns → val is string"},{t:"log-orange",i:"!",v:"narrows permanently after call"}],
+      [{t:"d-output",i:"←",v:"val: string"},{t:"log-green",i:"✓",v:"toUpperCase() available ✓"}],
+      [{t:"d-output",i:"←",v:"n: number (null removed)"},{t:"log-green",i:"✓",v:"assertDefined removed null ✓"}],
+    ],
+    mem:[
+      {g:[{k:"assertString",v:"asserts x is str",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"assertDefined",v:"asserts v is T",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"val",v:"unknown",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"val",v:"unknown"}],l:[],c:[{k:"assertString(val)",v:"narrowing...",s:"mv-changed"}]},
+      {g:[{k:"val",v:"string (narrowed)",s:"mv-changed"}],l:[],c:[{k:"toUpperCase()",v:"✓"}]},
+      {g:[{k:"n",v:"number (narrowed)",s:"mv-changed"}],l:[],c:[{k:"null removed",v:"✓"}]},
+    ],
+  }],
+},{
+  num:24,title:"Decorators",tag:"@decorator, class/method/property",
+  concept:"<strong>Decorators</strong> are a Stage 3 TC39 proposal (also available as TypeScript experimental feature). They use <code>@expression</code> syntax before classes, methods, properties, or parameters. A decorator is a function that receives the target and can modify or annotate it. Enable with <code>experimentalDecorators: true</code> in tsconfig.",
+  callout:{type:"callout-orange",text:"TypeScript supports two decorator systems: the legacy experimentalDecorators (used by Angular, NestJS) and the new Stage 3 decorators. They have different APIs — check your framework's requirements."},
+  refs:[{lbl:"Decorators",cls:"",title:"Decorators (experimental)",sub:"typescriptlang.org"},{lbl:"TC39 Proposal",cls:"",title:"TC39 Decorator Proposal",sub:"github.com"}],
+  memPanelTitle:"Type environment",
+  legend:[{color:"var(--purple)",label:"decorator"},{color:"var(--green)",label:"applied result"},{color:"var(--orange)",label:"metadata"},{color:"var(--red)",label:"decorator error"}],
+  examples:[{
+    name:"Class and method decorators",
+    desc:"A <strong>class decorator</strong> receives the constructor function. A <strong>method decorator</strong> receives the prototype, method name, and property descriptor. They can replace, wrap, or annotate the target.",
+    code:`<span class="kw">function</span> <span class="fn"><span id="gc0">sealed</span></span>(ctor: <span class="fn">Function</span>) {
+  Object.<span class="fn">seal</span>(ctor);
+  Object.<span class="fn">seal</span>(ctor.prototype);
+}
+<span class="kw">function</span> <span class="fn"><span id="gc1">log</span></span>(_t: <span class="kw">any</span>, name: <span class="kw">string</span>, desc: PropertyDescriptor) {
+  <span class="kw">const</span> orig = desc.value;
+  desc.value = <span class="kw">function</span>(...args: <span class="kw">any</span>[]) {
+    console.<span class="fn">log</span>(<span class="str">"call:"</span>, name);
+    <span class="kw">return</span> orig.<span class="fn">apply</span>(<span class="kw">this</span>, args);
+  };
+}
+<span id="gc2">@sealed</span>
+<span class="kw">class</span> <span id="gc3">Greeter</span> {
+  <span id="gc4">@log</span>
+  <span class="fn">greet</span>(name: <span class="kw">string</span>) { <span class="kw">return</span> <span class="str">"Hi "</span> + name; }
+}
+<span class="kw">const</span> <span id="gc5">g</span> = <span class="kw">new</span> <span class="fn">Greeter</span>();
+g.<span class="fn">greet</span>(<span class="str">"Alice"</span>); <span class="cm">// logs "call: greet", returns "Hi Alice" ✓</span>`,
+    steps:[
+      "sealed decorator — seals the class constructor and prototype",
+      "log decorator — wraps method to log calls before executing",
+      "@sealed applied to Greeter class — constructor gets sealed",
+      "Greeter class with @log on greet method",
+      "@log wraps greet — console.log fires before original runs",
+      "g.greet('Alice') — logs 'call: greet', returns 'Hi Alice' ✓",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"sealed: class deco",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"log: method deco",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"@sealed→Greeter sealed",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"Greeter: @log greet",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"greet wrapped by @log",t:"f-cb"}],
+      [{l:"g.greet()",t:"f-active"},{l:"logs+returns ✓",t:"f-cb"}],
+    ],
+    flow:[
+      [{t:"d-transform",i:"⇒",v:"sealed(ctor): Object.seal(ctor)"},{t:"log-purple",i:"!",v:"prevents new properties on class"}],
+      [{t:"d-transform",i:"⇒",v:"log wraps desc.value with logger"},{t:"log-purple",i:"!",v:"method decorator pattern"}],
+      [{t:"d-transform",i:"⇒",v:"@sealed applied at class definition time"},{t:"log-orange",i:"!",v:"constructor sealed ✓"}],
+      [{t:"d-input",i:"→",v:"Greeter.greet decorated with @log"}],
+      [{t:"d-transform",i:"⇒",v:"greet replaced with logging wrapper"},{t:"log-orange",i:"!",v:"original call preserved"}],
+      [{t:"d-output",i:"←",v:"greet('Alice') → logs + 'Hi Alice'"},{t:"log-green",i:"✓",v:"decorator applied ✓"}],
+    ],
+    mem:[
+      {g:[{k:"sealed",v:"class decorator fn",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"log",v:"method decorator fn",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Greeter",v:"@sealed applied",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Greeter",v:"@sealed+@log"}],l:[],c:[{k:"greet",v:"@log wrapped"}]},
+      {g:[{k:"Greeter.greet",v:"wrapped by log",s:"mv-changed"}],l:[],c:[]},
+      {g:[{k:"g",v:"new Greeter()"}],l:[],c:[{k:"g.greet('Alice')",v:"'Hi Alice' ✓",s:"mv-new"}]},
+    ],
+  },{
+    name:"Property and parameter decorators",
+    desc:"A <strong>property decorator</strong> receives the prototype and property name. A <strong>parameter decorator</strong> receives the prototype, method name, and parameter index. Both are primarily used for metadata collection (e.g., dependency injection frameworks).",
+    code:`<span class="kw">function</span> <span class="fn"><span id="gc0">readonly</span></span>(target: <span class="kw">any</span>, key: <span class="kw">string</span>) {
+  Object.<span class="fn">defineProperty</span>(target, key, { writable: <span class="kw">false</span> });
+}
+<span class="kw">function</span> <span class="fn"><span id="gc1">inject</span></span>(target: <span class="kw">any</span>, _m: <span class="kw">string</span>, idx: <span class="kw">number</span>) {
+  console.<span class="fn">log</span>(<span class="str">"inject param"</span>, idx);
+}
+<span class="kw">class</span> <span id="gc2">Service</span> {
+  <span id="gc3">@readonly</span>
+  name = <span class="str">"svc"</span>;
+  <span class="fn">run</span>(<span id="gc4">@inject</span> dep: <span class="kw">string</span>) { <span class="kw">return</span> dep; }
+}
+<span class="kw">const</span> <span id="gc5">s</span> = <span class="kw">new</span> <span class="fn">Service</span>();
+s.<span class="fn">run</span>(<span class="str">"dep"</span>); <span class="cm">// param decorator runs at class definition ✓</span>`,
+    steps:[
+      "readonly decorator — uses Object.defineProperty to make property non-writable",
+      "inject decorator — logs parameter index (used for DI metadata)",
+      "Service class — will use both decorators",
+      "@readonly on name — name property becomes non-writable",
+      "@inject on dep parameter — fires at class definition time",
+      "s.run('dep') — parameter decorator already fired; method works ✓",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"readonly: prop deco",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"inject: param deco",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"Service class",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"@readonly→name rdonly",t:"f-active"}],
+      [{l:"module()",t:"f-global"},{l:"@inject→logs param 0",t:"f-active"}],
+      [{l:"s.run()",t:"f-active"},{l:"returns 'dep' ✓",t:"f-cb"}],
+    ],
+    flow:[
+      [{t:"d-transform",i:"⇒",v:"readonly: defineProperty(writable:false)"},{t:"log-purple",i:"!",v:"property decorator"}],
+      [{t:"d-transform",i:"⇒",v:"inject: logs parameter index"},{t:"log-purple",i:"!",v:"parameter decorator"}],
+      [{t:"d-input",i:"→",v:"Service class definition"}],
+      [{t:"d-transform",i:"⇒",v:"@readonly applied to name"},{t:"log-orange",i:"!",v:"name: non-writable ✓"}],
+      [{t:"d-transform",i:"⇒",v:"@inject applied to param 0 of run"},{t:"log-orange",i:"!",v:"logs 'inject param 0'"}],
+      [{t:"d-output",i:"←",v:"s.run('dep') → 'dep'"},{t:"log-green",i:"✓",v:"decorators applied at class def time ✓"}],
+    ],
+    mem:[
+      {g:[{k:"readonly",v:"prop decorator fn",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"inject",v:"param decorator fn",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Service",v:"class",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Service.name",v:"non-writable",s:"mv-changed"}],l:[],c:[]},
+      {g:[{k:"Service.run",v:"param 0: @inject"}],l:[],c:[{k:"inject fired",v:"idx=0",s:"mv-changed"}]},
+      {g:[{k:"s",v:"new Service()"}],l:[],c:[{k:"s.run('dep')",v:"'dep' ✓",s:"mv-new"}]},
+    ],
+  }],
+},{
+  num:25,title:"The infer Keyword",tag:"infer in conditional types",
+  concept:"The <code>infer</code> keyword is used <em>inside conditional types</em> to declare a type variable to be inferred. It lets you capture part of a type during a conditional type match — like destructuring at the type level. Common uses: <code>UnpackPromise</code>, <code>UnpackArray</code>, <code>ReturnType</code>, and <code>Parameters</code> are all implemented with infer.",
+  callout:{type:"callout-purple",text:"infer can only appear in the extends clause of a conditional type. Think of it as a type-level pattern match: if T matches the pattern, capture the inferred part; otherwise use the fallback."},
+  refs:[{lbl:"infer keyword",cls:"",title:"Using infer in conditional types",sub:"typescriptlang.org"},{lbl:"Infer patterns",cls:"",title:"Common infer patterns",sub:"typescriptlang.org"}],
+  memPanelTitle:"Type environment",
+  legend:[{color:"var(--purple)",label:"infer binding"},{color:"var(--green)",label:"inferred type"},{color:"var(--orange)",label:"conditional match"},{color:"var(--red)",label:"no match fallback"}],
+  examples:[{
+    name:"UnpackPromise and UnpackArray",
+    desc:"<code>infer R</code> in <code>T extends Promise&lt;infer R&gt;</code> captures the resolved type R. If T is a Promise, R is bound to its resolution type; otherwise the fallback is used.",
+    code:`<span class="kw">type</span> <span id="gc0">UnpackPromise&lt;T&gt;</span> =
+  T <span class="kw">extends</span> Promise&lt;<span class="kw">infer</span> R&gt; ? R : T;
+<span class="kw">type</span> <span id="gc1">A</span> = UnpackPromise&lt;Promise&lt;<span class="kw">string</span>&gt;&gt;; <span class="cm">// string</span>
+<span class="kw">type</span> <span id="gc2">B</span> = UnpackPromise&lt;<span class="kw">number</span>&gt;;          <span class="cm">// number (not Promise)</span>
+<span class="kw">type</span> <span id="gc3">UnpackArray&lt;T&gt;</span> =
+  T <span class="kw">extends</span> (<span class="kw">infer</span> E)[] ? E : T;
+<span class="kw">type</span> <span id="gc4">C</span> = UnpackArray&lt;<span class="kw">boolean</span>[]&gt;; <span class="cm">// boolean</span>
+<span class="kw">type</span> <span id="gc5">D</span> = UnpackArray&lt;<span class="kw">string</span>&gt;;   <span class="cm">// string (not array)</span>`,
+    steps:[
+      "UnpackPromise<T> — if T extends Promise<R>, infer R; else T",
+      "A = UnpackPromise<Promise<string>> — matches; R=string → string",
+      "B = UnpackPromise<number> — no match; fallback → number",
+      "UnpackArray<T> — if T extends E[], infer E; else T",
+      "C = UnpackArray<boolean[]> — matches; E=boolean → boolean",
+      "D = UnpackArray<string> — no match; fallback → string",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"UnpackPromise<T>",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"A: Promise<str>→str",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"B: number→number",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"UnpackArray<T>",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"C: bool[]→bool",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"D: string→string",t:"f-cb"}],
+    ],
+    flow:[
+      [{t:"d-transform",i:"⇒",v:"T extends Promise<infer R> — bind R"},{t:"log-purple",i:"!",v:"R captures the Promise payload"}],
+      [{t:"d-transform",i:"⇒",v:"Promise<string> matches → R=string"},{t:"log-green",i:"✓",v:"A = string"}],
+      [{t:"d-transform",i:"⇒",v:"number not Promise → fallback T"},{t:"log-orange",i:"!",v:"B = number"}],
+      [{t:"d-transform",i:"⇒",v:"T extends (infer E)[] — bind E"},{t:"log-purple",i:"!",v:"E captures array element type"}],
+      [{t:"d-transform",i:"⇒",v:"boolean[] matches → E=boolean"},{t:"log-green",i:"✓",v:"C = boolean"}],
+      [{t:"d-transform",i:"⇒",v:"string not array → fallback T"},{t:"log-orange",i:"!",v:"D = string"}],
+    ],
+    mem:[
+      {g:[{k:"UnpackPromise<T>",v:"infer R pattern",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"A",v:"string",s:"mv-new"}],l:[],c:[{k:"R inferred",v:"string"}]},
+      {g:[{k:"B",v:"number (fallback)",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"UnpackArray<T>",v:"infer E pattern",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"C",v:"boolean",s:"mv-new"}],l:[],c:[{k:"E inferred",v:"boolean"}]},
+      {g:[{k:"D",v:"string (fallback)",s:"mv-new"}],l:[],c:[]},
+    ],
+  },{
+    name:"Infer in function types: ReturnType and FirstArg",
+    desc:"<code>infer</code> can capture parts of function types. The built-in <code>ReturnType&lt;T&gt;</code> uses <code>infer R</code> in the return position of a function type. You can apply the same pattern to extract parameter types.",
+    code:`<span class="kw">type</span> <span id="gc0">MyReturnType&lt;T&gt;</span> =
+  T <span class="kw">extends</span> (...args: <span class="kw">any</span>[]) =&gt; <span class="kw">infer</span> R ? R : <span class="kw">never</span>;
+<span class="kw">type</span> <span id="gc1">FirstArg&lt;T&gt;</span> =
+  T <span class="kw">extends</span> (first: <span class="kw">infer</span> A, ...rest: <span class="kw">any</span>[]) =&gt; <span class="kw">any</span> ? A : <span class="kw">never</span>;
+<span class="kw">function</span> <span class="fn"><span id="gc2">add</span></span>(a: <span class="kw">number</span>, b: <span class="kw">number</span>): <span class="kw">number</span> { <span class="kw">return</span> a + b; }
+<span class="kw">type</span> <span id="gc3">Ret</span>   = MyReturnType&lt;<span class="kw">typeof</span> <span class="fn">add</span>&gt;;  <span class="cm">// number</span>
+<span class="kw">type</span> <span id="gc4">First</span> = FirstArg&lt;<span class="kw">typeof</span> <span class="fn">add</span>&gt;;     <span class="cm">// number</span>
+<span class="kw">type</span> <span id="gc5">Bad</span>   = MyReturnType&lt;<span class="kw">string</span>&gt;;    <span class="cm">// never (not a fn)</span>`,
+    steps:[
+      "MyReturnType<T> — captures return type R from function signature",
+      "FirstArg<T> — captures type A of the first parameter",
+      "add(a,b): number — a function to introspect",
+      "Ret = MyReturnType<typeof add> — R inferred as number",
+      "First = FirstArg<typeof add> — A inferred as number (param a)",
+      "Bad = MyReturnType<string> — string not a function → never",
+    ],
+    hl:["gc0","gc1","gc2","gc3","gc4","gc5"],
+    frames:[
+      [{l:"module()",t:"f-global"},{l:"MyReturnType<T>",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"FirstArg<T>",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"add: (num,num)=>num",t:"f-hof"}],
+      [{l:"module()",t:"f-global"},{l:"Ret: number",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"First: number",t:"f-cb"}],
+      [{l:"module()",t:"f-global"},{l:"Bad: never",t:"f-special"}],
+    ],
+    flow:[
+      [{t:"d-transform",i:"⇒",v:"(...args:any[]) => infer R"},{t:"log-purple",i:"!",v:"R bound to return type"}],
+      [{t:"d-transform",i:"⇒",v:"(first: infer A, ...rest) => any"},{t:"log-purple",i:"!",v:"A bound to first param type"}],
+      [{t:"d-input",i:"→",v:"add: (a:number, b:number) => number"}],
+      [{t:"d-transform",i:"⇒",v:"T matches fn → R=number"},{t:"log-green",i:"✓",v:"Ret = number"}],
+      [{t:"d-transform",i:"⇒",v:"T matches fn → A=number (first param)"},{t:"log-green",i:"✓",v:"First = number"}],
+      [{t:"d-transform",i:"⇒",v:"string not a function → never"},{t:"log-orange",i:"!",v:"Bad = never (fallback)"}],
+    ],
+    mem:[
+      {g:[{k:"MyReturnType<T>",v:"infer R in return",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"FirstArg<T>",v:"infer A in param",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"add",v:"(num,num)=>num",s:"mv-new"}],l:[],c:[]},
+      {g:[{k:"Ret",v:"number",s:"mv-new"}],l:[],c:[{k:"R inferred",v:"number"}]},
+      {g:[{k:"First",v:"number",s:"mv-new"}],l:[],c:[{k:"A inferred",v:"number (param a)"}]},
+      {g:[{k:"Bad",v:"never",s:"mv-new"}],l:[],c:[{k:"string not fn",v:"→ never"}]},
+    ],
+  }],
+}
 ];
 
 // ── ENGINE ──────────────────────────────────────────
